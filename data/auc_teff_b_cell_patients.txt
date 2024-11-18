@@ -1,0 +1,34 @@
+AUC	sensitivity	specificity	group	timepoint	sig_name	Cohort	id	data_type
+0.57	0.727272727272727	0.461538461538462	aPD1	PRE	B cell sig. score	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+0.77	0.909090909090909	0.615384615384615	aPD1	PRE	Teff sig. score	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+0.74	1	0.494505494505495	aPD1	PRE	Combined sig. score	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+0.69	0.75	0.875	aPD1	ON/POST	B cell sig. score	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+0.62	0.333333333333333	1	aPD1	PRE	B cell sig. score	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+0.69	0.75	0.875	aPD1	ON/POST	Teff sig. score	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+0.88	1	0.75	aPD1	PRE	Teff sig. score	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+0.69	0.75	0.875	aPD1	ON/POST	Combined sig. score	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+0.83	1	0.625	aPD1	PRE	Combined sig. score	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+0.9	1	0.9	aPD1	PRE	B cell sig. score	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+0.8	1	0.7	aPD1	PRE	Teff sig. score	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+0.85	1	0.8	aPD1	PRE	Combined sig. score	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+0.89	0.666666666666667	1	aPD1	PRE	B cell sig. score	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+1	1	1	aPD1	ON/POST	B cell sig. score	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+1	1	1	aPD1	PRE	Teff sig. score	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+1	1	1	aPD1	ON/POST	Teff sig. score	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+0.89	0.666666666666667	1	aPD1	PRE	Combined sig. score	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+1	1	1	aPD1	ON/POST	Combined sig. score	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+0.79	1	0.533333333333333	aPD1	PRE	B cell sig. score	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+0.81	0.6	0.866666666666667	aPD1	PRE	Teff sig. score	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+0.8	0.8	0.8	aPD1	PRE	Combined sig. score	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+0.76	0.8	0.666666666666667	Unknown	PRE	B cell sig. score	Bill sc	Bill sc_Unknown_PRE	Single cell
+0.64	1	0.444444444444444	Unknown	PRE	Teff sig. score	Bill sc	Bill sc_Unknown_PRE	Single cell
+0.71	1	0.444444444444444	Unknown	PRE	Combined sig. score	Bill sc	Bill sc_Unknown_PRE	Single cell
+0.83	1	0.833333333333333	Mono	Post	B cell sig. score	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+0.67	1	0.666666666666667	Mono	Post	Teff sig. score	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+0.83	1	0.833333333333333	Mono	Post	Combined sig. score	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+0.71	1	0.714285714285714	Mono	B1	B cell sig. score	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+0.86	1	0.857142857142857	Mono	B2	B cell sig. score	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+0.57	1	0.571428571428571	Mono	B1	Teff sig. score	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+0.86	1	0.857142857142857	Mono	B2	Teff sig. score	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+0.86	1	0.857142857142857	Mono	B1	Combined sig. score	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+0.86	1	0.857142857142857	Mono	B2	Combined sig. score	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell

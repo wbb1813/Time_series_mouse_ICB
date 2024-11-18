@@ -1,0 +1,8 @@
+odds_ratio	Timepoint	Treatment	cohort	Type	id
+8.27272727272727	PRE	aPD1	Foy1_2022	Testing	Foy1_2022_aPD1_PRE
+2	ON/POST	aPD1	Liu_2021	Testing	Liu_2021_aPD1_ON/POST
+4.5	PRE	aPD1	Liu_2021	Testing	Liu_2021_aPD1_PRE
+13	PRE	aPD1	Aoki_2021	Testing	Aoki_2021_aPD1_PRE
+5	ON/POST	aPD1	Aoki_2021	Testing	Aoki_2021_aPD1_ON/POST
+4	PRE	aPD1	Obradovic2_2022	Testing	Obradovic2_2022_aPD1_PRE
+5	PRE	aPD1	Training	Training	Training_aPD1_PRE
