@@ -2,13 +2,14 @@ library(ggplot2)
 library(survival)
 library(survminer)
 library(dplyr)
+
 outdir='../results/figure4'
 if (!dir.exists(outdir)){
   dir.create(outdir,recursive = T)
 }
 ## ------- Inputs and parameters -------
-bulk_patient_score=readRDS('/data/Binbin_Kun/binbin/silvio/results/ICB_odds_fix_cutoff/bulk_patient_score.rds')
-tcga_hnsc=read.delim('/data/Binbin_Kun/binbin/silvio/results/ICB_response_signature_genes/t2_response_tb/survival/TCGA_HNSC/tcga_hnsc_mean_tb_score.txt')
+bulk_patient_score=readRDS('../data/bulk_patient_score.rds')
+tcga_hnsc=read.delim('../data/tcga_hnsc_mean_tb_score.txt')
 
 df_comb_filter=read.delim('../data/auc_teff_b_cell_patients.txt')
 fixed_cutoff_odds_sum=read.delim('../data/fixed_cutoff_odds_sum.txt')
@@ -108,8 +109,8 @@ hr_plot=function(df,surv_time,surv_status,sex_info,fig_title,prefix){
     ) +
     geom_text(aes(label = p_value_label, x = upper_ci), hjust = -0.3)  # P-value text
   
-  return(p)
   ggsave(file.path(outdir,paste0(prefix,'.pdf')),p,width = 4,height = 6)
+  return(p)
 }
 
 ## TCGA
@@ -151,9 +152,8 @@ km_plot=function(df,surv_time='OS_days',surv_status='OS_status',prefix){
   # Plot the Kaplan-Meier curves
   p_km=ggsurvplot(km_fit, data = df, pval = TRUE, conf.int = F, 
                   risk.table = TRUE, ggtheme = theme_minimal(),palette = c("darkred", "#2E9FDF"))
-  return(p_km)
   ggsave(file.path(outdir,paste(prefix,'_km_curve.pdf',sep = "_")),p_km$plot,width = 4,height = 3)
-  
+  return(p_km)
 }
 
 ## TCGA
