@@ -20,14 +20,14 @@ library(survminer)
 
 ## ------- Inputs and parameters -------
 ## Mouse indetified interactions
-all_rdi=readRDS("/data/Binbin_Kun/binbin/silvio/results/ICB_response_interaction/iris_mouse_human_lib/p0.1/comb_t234/RDI_t234.rds")
+all_rdi=readRDS("../data/RDI_t234.rds")
 
 ## HNSC bulk interactions 
-Aoki_liric=readRDS('/data/Binbin_Kun/binbin/silvio/results/ICB_LIRICS/human_lirics_db/Aoki_2021/LIRICS.RDS')
-Foy_liric=readRDS('/data/Binbin_Kun/binbin/silvio/results/ICB_LIRICS/human_lirics_db/Foy_2022/LIRICS.RDS')
-INSPIRE_liric=readRDS('/data/Binbin_Kun/binbin/silvio/results/ICB_LIRICS/human_lirics_db/INSPIRE/LIRICS.RDS')
-Liu_liric=readRDS('/data/Binbin_Kun/binbin/silvio/results/ICB_LIRICS/human_lirics_db/Liu_2021/LIRICS.RDS')
-Obradovic2_liric=readRDS('/data/Binbin_Kun/binbin/silvio/results/ICB_LIRICS/human_lirics_db/Obradovic2_2022/LIRICS.RDS')
+Aoki_liric=readRDS('../data/human_lirics_db/Aoki_2021/LIRICS.RDS')
+Foy_liric=readRDS('../data/human_lirics_db/Foy_2022/LIRICS.RDS')
+INSPIRE_liric=readRDS('../data/human_lirics_db/INSPIRE/LIRICS.RDS')
+Liu_liric=readRDS('../data/human_lirics_db/Liu_2021/LIRICS.RDS')
+Obradovic2_liric=readRDS('../data/human_lirics_db/Obradovic2_2022/LIRICS.RDS')
 
 ## HNSC bulk meta
 bulk_patient_icb=readRDS('/data/Binbin_Kun/binbin/silvio/data/icb_cohorts/bulk/sahil/ICB_HNSCC_070924_revised.RDS')
@@ -153,7 +153,7 @@ plot_interactions <- function(DD, cell_color_mapping = NULL, annotations = NULL,
 
 
 ## ------- Plot interaction -------
-com_intr=read_rds('../data/patient_RDI.rds')
+com_intr=readRDS('../data/patient_RDI.rds')
 
 ## Make CELL LR DF
 Feature_df = com_intr %>% as.data.frame(.) %>% set_colnames('interaction') %>%

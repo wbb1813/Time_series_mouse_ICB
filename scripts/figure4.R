@@ -52,7 +52,7 @@ ggsave(file.path(outdir,'odds_ratio_train_test.pdf'),p,width = 4,height = 3.5)
 
 ## ------- Survival analysis -------
 ## Functions 
-hr_plot=function(df,surv_time,surv_status,sex_info,fig_title,prefix){
+hr_plot=function(df,surv_time,surv_status,sex_info,fig_title,xlim=3.5,width = 3,height = 5,prefix){
   colnames(df)[which(colnames(df)==surv_time)]='time'
   colnames(df)[which(colnames(df)==surv_status)]='status'
   df$time=as.numeric(df$time)
@@ -101,7 +101,7 @@ hr_plot=function(df,surv_time,surv_status,sex_info,fig_title,prefix){
       x = "Hazard Ratio",
       y = NULL
     ) +
-    theme_minimal() +
+    theme_minimal() +expand_limits(x = xlim)+
     theme(
       plot.title = element_text(hjust = 0.5),
       panel.grid.minor = element_blank(),
@@ -109,7 +109,7 @@ hr_plot=function(df,surv_time,surv_status,sex_info,fig_title,prefix){
     ) +
     geom_text(aes(label = p_value_label, x = upper_ci), hjust = -0.3)  # P-value text
   
-  ggsave(file.path(outdir,paste0(prefix,'.pdf')),p,width = 4,height = 6)
+  ggsave(file.path(outdir,paste0(prefix,'.pdf')),p,width = width,height = height)
   return(p)
 }
 
@@ -118,7 +118,7 @@ df = tcga_hnsc
 df$HPV[which(df$HPV=='negative')]='Neg'
 df$HPV[which(df$HPV=='positive')]='Pos'
 df=df[which(df$HPV!='indeterminate'),]
-p_tcga=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=T,fig_title='TCGA HNSC','tcga_hnsc_cox')
+p_tcga=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=T,fig_title='TCGA HNSC',xlim = 3.5,prefix = 'tcga_hnsc_cox')
 
 ## Foy
 df=bulk_patient_score$Foy1_2022
@@ -128,13 +128,13 @@ df$HPV_status[which(df$HPV_status=='2')]='Unknown'
 #df$HPV_status <- relevel(df$HPV_status, ref = "Unknown")
 colnames(df)[which(colnames(df)=='HPV_status')]='HPV'
 
-p_foy_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=T,fig_title='Foy et al. OS','foy_os_cox')
-p_foy_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=T,fig_title='Foy et al. PFS','foy_pfs_cox')
+p_foy_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=T,fig_title='Foy et al. OS',xlim = 30,prefix = 'foy_os_cox')
+p_foy_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=T,fig_title='Foy et al. PFS',xlim = 30,prefix = 'foy_pfs_cox')
 
 ## INSPIRE
 df=bulk_patient_score$INSPIRE
-p_INSPIRE_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=F,fig_title='INSPIRE OS','INSPIRE_os_cox')
-p_INSPIRE_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=F,fig_title='INSPIRE PFS','INSPIRE_pfs_cox')
+p_INSPIRE_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=F,fig_title='INSPIRE OS',xlim = 30,height = 3,prefix ='INSPIRE_os_cox')
+p_INSPIRE_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=F,fig_title='INSPIRE PFS',xlim = 30,height = 3,prefix ='INSPIRE_pfs_cox')
 
 ## ------- KM curve -------
 ## Functions 
