@@ -19,24 +19,13 @@ library(survival)
 library(survminer)
 
 ## ------- Inputs and parameters -------
-## Mouse indetified interactions
-all_rdi=readRDS("../data/RDI_t234.rds")
+inter_score=readRDS('../data/patient_interaction_score.rds')
 
-## HNSC bulk interactions 
-Aoki_liric=readRDS('../data/human_lirics_db/Aoki_2021/LIRICS.RDS')
-Foy_liric=readRDS('../data/human_lirics_db/Foy_2022/LIRICS.RDS')
-INSPIRE_liric=readRDS('../data/human_lirics_db/INSPIRE/LIRICS.RDS')
-Liu_liric=readRDS('../data/human_lirics_db/Liu_2021/LIRICS.RDS')
-Obradovic2_liric=readRDS('../data/human_lirics_db/Obradovic2_2022/LIRICS.RDS')
+outdir='../results/figure5'
 
-## HNSC bulk meta
-bulk_patient_icb=readRDS('/data/Binbin_Kun/binbin/silvio/data/icb_cohorts/bulk/sahil/ICB_HNSCC_070924_revised.RDS')
-
-## Interactions of SC cohort
-sc_interactions=readRDS('/data/Binbin_Kun/binbin/silvio/results/SOCIAL_Meastro_anno/Final_SOCIAL_step1-4_LIRICSdb_output.RDS')
-sc_patient_icb=readRDS('/data/Binbin_Kun/binbin/silvio/results/ICB_ML/datasets/patient_sc_dat.rds')
-
-
+if (!dir.exists(outdir)){
+  dir.create(outdir,recursive = T)
+}
 ## -------  Calculate AUC R vs. NR across each timepoint RDI/RAI in mouse sc data -------
 auc_input_rdi=readRDS('../data/mouse_RDI_AUC.rds')
 ggplot(data=auc_input_rdi, aes(x=timepoint, y=auc, fill=group)) +
@@ -237,6 +226,7 @@ hr_plot=function(df,surv_time,surv_status,sex_info,fig_title,prefix){
 }
 
 ## Foy
+Foy_score=inter_score$Foy_score
 df=Foy_score
 df$HPV_status[which(df$HPV_status==0)]='Neg'
 df$HPV_status[which(df$HPV_status=='1')]='Pos'
@@ -247,6 +237,7 @@ p_foy_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=T,
 p_foy_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=T,fig_title='Foy et al. PFS','foy_pfs_cox')
 
 ## INSPIRE
+INSPIRE_score=inter_score$INSPIRE_score
 df=INSPIRE_score
 p_INSPIRE_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=F,fig_title='INSPIRE OS','INSPIRE_os_cox')
 p_INSPIRE_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=F,fig_title='INSPIRE PFS','INSPIRE_pfs_cox')
