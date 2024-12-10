@@ -3,6 +3,7 @@ library(ggplot2)
 library(Seurat)
 library(reshape)
 library(ggpubr)
+library('cutpointr')
 #library(immunarch)
 ## ------- Inputs and parameters -------
 tcr_meta=read.delim('../data/sc_tcr_meta.txt')
@@ -14,10 +15,7 @@ bulk_bcr_div_inv_simp=read.delim('../data/bulk_bcr_div_inv_simp.txt')
 
 cd4_tcr_meta=read.delim('../data/sc_cd4_tcr_meta.txt')
 
-
-mouse_bulk_meta
-mouse_sc_meta=read.delim('../data/')
-
+## Outputs 
 outdir='../results/figure2'
 if (!dir.exists(outdir)){
   dir.create(outdir,recursive = T)
@@ -219,7 +217,7 @@ cd4_tcr_dis=ggplot(data=df, aes(x=Group2, y=Freq, fill=group)) +
 cd4_tcr_dis
 ggsave(file.path(outdir,paste0('cd4t','_clonetype_distribution.png')),cd4_tcr_dis,width = 4,height = 4)
 
-## ------- Calculate AUC with T and B cell expentsion index -------
+## ------- Calculate AUC with T and B cell expansion index -------
 ## Functions
 cal_auc_odd=function(df,score_col,response_col,group_col,timepoint_col){
   df=df[,c(score_col,response_col,group_col,timepoint_col)]
@@ -240,3 +238,44 @@ cal_auc_odd=function(df,score_col,response_col,group_col,timepoint_col){
   }
   return(pred_res)
 }
+
+## Calculate AUC with single cell TCR data 
+df=teff_subtype_average_clone_size
+df$treatment='aPD1'
+df$Response=ifelse(df$Response=='Responders','1',"0")
+
+sc_auc=cal_auc_odd(df,score_col='mean_clone_size',response_col='Response',group_col='treatment',timepoint_col='timepoint')
+
+## Calculate AUC with bulk TCR and BCR data 
+# TCR
+df=bulk_tcr_div_inv_simp
+df$treatment='aPD1'
+df$Response=ifelse(df$Response=='Responders','1',"0")
+
+bulk_tcr_auc=cal_auc_odd(df,score_col='Value',response_col='Response',group_col='treatment',timepoint_col='timepoint')
+
+# BCR
+df=bulk_bcr_div_inv_simp
+df$treatment='aPD1'
+df$Response=ifelse(df$Response=='Responders','1',"0")
+
+bulk_bcr_auc=cal_auc_odd(df,score_col='Value',response_col='Response',group_col='treatment',timepoint_col='timepoint')
+
+## plot AUC
+sc_auc$Group='sc_TCR'
+bulk_tcr_auc$Group='bulk_TCR'
+bulk_bcr_auc$Group='bulk_BCR'
+
+df_plot=rbind(sc_auc,bulk_tcr_auc,bulk_bcr_auc)
+
+
+p = ggplot(data=df_plot, aes(x=timepoint, y=AUC, color=Group,fill=Group)) +
+  geom_bar(stat="identity", position=position_dodge(width = 0.9),width = 0.8,fill="white")+
+  geom_text(aes(label=signif(AUC,2)), vjust=1.6, color="black",
+            position = position_dodge(0.9), size=2.5)+
+  scale_color_brewer(palette="Dark2")+
+  theme_classic()
+
+ggsave(file.path(outdir,paste0('tcr','_auc_mouse.png')),p,width = 6,height = 3.5)
+
+
