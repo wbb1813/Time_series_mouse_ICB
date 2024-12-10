@@ -118,7 +118,7 @@ df = tcga_hnsc
 df$HPV[which(df$HPV=='negative')]='Neg'
 df$HPV[which(df$HPV=='positive')]='Pos'
 df=df[which(df$HPV!='indeterminate'),]
-p_tcga=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=T,fig_title='TCGA HNSC',xlim = 3.5,prefix = 'tcga_hnsc_cox')
+p_tcga=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=T,fig_title='TCGA HNSC',xlim = 15,width = 2,height = 4,prefix = 'tcga_hnsc_cox')
 
 ## Foy
 df=bulk_patient_score$Foy1_2022
@@ -128,13 +128,13 @@ df$HPV_status[which(df$HPV_status=='2')]='Unknown'
 #df$HPV_status <- relevel(df$HPV_status, ref = "Unknown")
 colnames(df)[which(colnames(df)=='HPV_status')]='HPV'
 
-p_foy_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=T,fig_title='Foy et al. OS',xlim = 30,prefix = 'foy_os_cox')
-p_foy_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=T,fig_title='Foy et al. PFS',xlim = 30,prefix = 'foy_pfs_cox')
+p_foy_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=T,fig_title='Foy et al. OS',xlim = 25,width = 2.3,height = 4,prefix = 'foy_os_cox')
+p_foy_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=T,fig_title='Foy et al. PFS',xlim = 25,width = 2.3,height = 4,prefix = 'foy_pfs_cox')
 
 ## INSPIRE
 df=bulk_patient_score$INSPIRE
-p_INSPIRE_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=F,fig_title='INSPIRE OS',xlim = 30,height = 3,prefix ='INSPIRE_os_cox')
-p_INSPIRE_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=F,fig_title='INSPIRE PFS',xlim = 30,height = 3,prefix ='INSPIRE_pfs_cox')
+p_INSPIRE_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=F,fig_title='INSPIRE OS',xlim = 30,width = 2.3,height = 2,prefix ='INSPIRE_os_cox')
+p_INSPIRE_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=F,fig_title='INSPIRE PFS',xlim = 30,width = 2.3,height = 2,prefix ='INSPIRE_pfs_cox')
 
 ## ------- KM curve -------
 ## Functions 

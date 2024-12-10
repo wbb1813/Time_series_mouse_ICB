@@ -3,7 +3,7 @@ library(ggplot2)
 library(Seurat)
 library(reshape)
 library(ggpubr)
-library(immunarch)
+#library(immunarch)
 ## ------- Inputs and parameters -------
 tcr_meta=read.delim('../data/sc_tcr_meta.txt')
 teff_subtype_average_clone_size=read.delim('../data/teff_subtype_average_clone_size.txt')
@@ -13,6 +13,10 @@ bulk_tcr_div_inv_simp=read.delim('../data/bulk_tcr_div_inv_simp.txt')
 bulk_bcr_div_inv_simp=read.delim('../data/bulk_bcr_div_inv_simp.txt')
 
 cd4_tcr_meta=read.delim('../data/sc_cd4_tcr_meta.txt')
+
+
+mouse_bulk_meta
+mouse_sc_meta=read.delim('../data/')
 
 outdir='../results/figure2'
 if (!dir.exists(outdir)){
@@ -214,3 +218,25 @@ cd4_tcr_dis=ggplot(data=df, aes(x=Group2, y=Freq, fill=group)) +
   expand_limits(y = c(0, 1.05))+theme(legend.title = element_blank() )
 cd4_tcr_dis
 ggsave(file.path(outdir,paste0('cd4t','_clonetype_distribution.png')),cd4_tcr_dis,width = 4,height = 4)
+
+## ------- Calculate AUC with T and B cell expentsion index -------
+## Functions
+cal_auc_odd=function(df,score_col,response_col,group_col,timepoint_col){
+  df=df[,c(score_col,response_col,group_col,timepoint_col)]
+  colnames(df)=c('score','Response','group','timepoint')
+  
+  pred_res=data.frame()
+  for (i in unique(df$group)){
+    for (j in unique(df$timepoint)){
+      tmp_df=df[which(df$group==i&df$timepoint==j),]
+      if (length(unique(tmp_df$Response))==2){
+        opt_cut <- cutpointr(tmp_df, score, Response, direction = ">=", pos_class = "1",
+                             neg_class = "0", method = maximize_metric, metric = sum_sens_spec)
+        opt_cut$group=i
+        opt_cut$timepoint=j
+        pred_res=rbind(pred_res,opt_cut)
+      }
+    }
+  }
+  return(pred_res)
+}
