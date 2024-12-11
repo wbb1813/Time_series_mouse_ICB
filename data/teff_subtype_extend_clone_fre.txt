@@ -44,5 +44,6 @@ mean_extend_fre	sample_id	sample_name	timepoint	group	cell_type	Response
 0.0588235294117647	SCAF3564_36_7251_T3	7251	3	responder	Effector memory CD8	Responders
 0.0833333333333333	SCAF3565_26_7258_T2	7258	2	responder	Effector memory CD8	Responders
 0.0909090909090909	SCAF3567_34_72248_T3	7248	3	responder	Effector memory CD8	Responders
+0.0526315789473684	SCAF3568_4_7251_T1	7251	1	responder	Effector memory CD8	Responders
 0.172413793103448	SCAF3569_33_7246_T3	7246	3	responder	Effector memory CD8	Responders
 0.111111111111111	SCAF3570_17_7246_T2	7246	2	responder	Effector memory CD8	Responders

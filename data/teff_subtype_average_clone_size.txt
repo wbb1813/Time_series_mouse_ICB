@@ -44,5 +44,6 @@ mean_clone_size	sample_id	sample_name	timepoint	group	cell_type	Response
 1.11764705882353	SCAF3564_36_7251_T3	7251	3	responder	Effector memory CD8	Responders
 1.125	SCAF3565_26_7258_T2	7258	2	responder	Effector memory CD8	Responders
 1.09090909090909	SCAF3567_34_72248_T3	7248	3	responder	Effector memory CD8	Responders
+1.05263157894737	SCAF3568_4_7251_T1	7251	1	responder	Effector memory CD8	Responders
 1.3448275862069	SCAF3569_33_7246_T3	7246	3	responder	Effector memory CD8	Responders
 1.22222222222222	SCAF3570_17_7246_T2	7246	2	responder	Effector memory CD8	Responders

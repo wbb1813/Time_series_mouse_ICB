@@ -15,6 +15,8 @@ bulk_bcr_div_inv_simp=read.delim('../data/bulk_bcr_div_inv_simp.txt')
 
 cd4_tcr_meta=read.delim('../data/sc_cd4_tcr_meta.txt')
 
+patient_meta=read.delim('../data/LiBIO_scRNA_sample_Summary_metrics.txt')
+
 ## Outputs 
 outdir='../results/figure2'
 if (!dir.exists(outdir)){
@@ -157,10 +159,10 @@ p
 ggsave(file.path(outdir,paste0('cd8t','_clonetype_expantion.png')),p,width = 3,height = 4)
 
 ## ------- Bulk TCR -------
-bulk_tcr_simp=twogroup_boxplot(df=div_inv_simp,y_value = 'Value',prefix='bulk_tcr_simp')
+bulk_tcr_simp=twogroup_boxplot(df=bulk_tcr_div_inv_simp,y_value = 'Value',prefix='bulk_tcr_simp')
 
 ## ------- Bulk BCR -------
-bulk_bcr_simp=twogroup_boxplot(df=div_inv_simp,y_value = 'Value',prefix='bulk_bcr_simp')
+bulk_bcr_simp=twogroup_boxplot(df=bulk_bcr_div_inv_simp,y_value = 'Value',prefix='bulk_bcr_simp')
 
 ## ------- UMAP of CD4 T cells -------
 cd4_all_tcr_umap=tcr_umap(df=cd4_tcr_meta,prefix='cd4t_all_samples')
