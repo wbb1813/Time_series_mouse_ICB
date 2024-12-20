@@ -1,0 +1,122 @@
+AUC	sensitivity	specificity	group	timepoint	sig_name	Cohort	id	data_type
+1	0.68	0.909090909090909	0.43956043956044	aPD1	PRE	CD38	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+2	0.8	0.909090909090909	0.615384615384615	aPD1	PRE	CXCL9	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+3	0.73	0.727272727272727	0.67032967032967	aPD1	PRE	CD274	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+4	0.5	0	1	aPD1	PRE	MEX3B	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+5	0.76	0.818181818181818	0.681318681318681	aPD1	PRE	chemo_12	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+6	0.78	1	0.483516483516484	aPD1	PRE	POPLAR_teff	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+7	0.56	0.363636363636364	0.802197802197802	aPD1	PRE	proliferation	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+8	0.76	0.727272727272727	0.758241758241758	aPD1	PRE	teff_ifng	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+9	0.38	1	0.164835164835165	aPD1	PRE	stroma_emt	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+10	0.31	1	0.0549450549450549	aPD1	PRE	tgfb	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+11	0.74	1	0.494505494505495	aPD1	PRE	mean_score	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+12	0.28	1	0.125	aPD1	ON/POST	CD38	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+13	0.5	1	0.25	aPD1	PRE	CD38	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+14	0.69	0.75	0.875	aPD1	ON/POST	CXCL9	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+15	0.67	0.666666666666667	0.75	aPD1	PRE	CXCL9	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+16	0.69	0.75	0.625	aPD1	ON/POST	CD274	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+17	0.54	0.666666666666667	0.75	aPD1	PRE	CD274	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+18	0.91	1	0.75	aPD1	ON/POST	MEX3B	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+19	0.58	1	0.375	aPD1	PRE	MEX3B	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+20	0.69	0.75	0.875	aPD1	ON/POST	chemo_12	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+21	0.75	1	0.5	aPD1	PRE	chemo_12	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+22	0.75	0.5	1	aPD1	ON/POST	POPLAR_teff	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+23	0.83	0.666666666666667	1	aPD1	PRE	POPLAR_teff	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+24	0.12	0	1	aPD1	ON/POST	proliferation	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+25	0.17	0	1	aPD1	PRE	proliferation	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+26	0.78	0.5	0.625	aPD1	ON/POST	teff_ifng	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+27	0.79	0.666666666666667	0.875	aPD1	PRE	teff_ifng	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+28	0.81	0.75	1	aPD1	ON/POST	stroma_emt	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+29	0.54	0.333333333333333	1	aPD1	PRE	stroma_emt	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+30	0.72	0.75	0.875	aPD1	ON/POST	tgfb	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+31	0.54	0.333333333333333	1	aPD1	PRE	tgfb	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+32	0.69	0.75	0.875	aPD1	ON/POST	mean_score	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+33	0.83	1	0.625	aPD1	PRE	mean_score	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+34	0.7	1	0.6	aPD1	PRE	CD38	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+35	0.8	1	0.7	aPD1	PRE	CXCL9	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+36	0.95	1	0.9	aPD1	PRE	CD274	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+37	0.65	0.5	0.8	aPD1	PRE	MEX3B	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+38	0.7	1	0.7	aPD1	PRE	chemo_12	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+39	0.75	1	0.7	aPD1	PRE	POPLAR_teff	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+40	0.85	1	0.8	aPD1	PRE	proliferation	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+41	0.9	1	0.8	aPD1	PRE	teff_ifng	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+42	0.05	0	1	aPD1	PRE	stroma_emt	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+43	0	0	1	aPD1	PRE	tgfb	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+44	0.85	1	0.8	aPD1	PRE	mean_score	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+45	1	1	1	aPD1	PRE	CD38	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+46	1	1	1	aPD1	ON/POST	CD38	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+47	0.61	0.333333333333333	1	aPD1	PRE	CXCL9	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+48	1	1	1	aPD1	ON/POST	CXCL9	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+49	0.56	0.333333333333333	1	aPD1	PRE	CD274	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+50	0.83	0.666666666666667	1	aPD1	ON/POST	CD274	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+51	0.56	0.333333333333333	1	aPD1	PRE	MEX3B	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+52	0.83	0.666666666666667	1	aPD1	ON/POST	MEX3B	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+53	0.67	0.666666666666667	0.666666666666667	aPD1	PRE	chemo_12	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+54	1	1	1	aPD1	ON/POST	chemo_12	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+55	1	1	1	aPD1	PRE	POPLAR_teff	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+56	1	1	1	aPD1	ON/POST	POPLAR_teff	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+57	0.11	0	1	aPD1	PRE	proliferation	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+58	0	0	1	aPD1	ON/POST	proliferation	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+59	0.78	0.666666666666667	1	aPD1	PRE	teff_ifng	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+60	1	1	1	aPD1	ON/POST	teff_ifng	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+61	0.67	0.666666666666667	1	aPD1	PRE	stroma_emt	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+62	1	1	1	aPD1	ON/POST	stroma_emt	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+63	0.56	0.333333333333333	1	aPD1	PRE	tgfb	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+64	1	1	1	aPD1	ON/POST	tgfb	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+65	0.89	0.666666666666667	1	aPD1	PRE	mean_score	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+66	1	1	1	aPD1	ON/POST	mean_score	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+67	0.79	0.6	0.6	aPD1	PRE	CD274	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+68	0.77	0.8	0.866666666666667	aPD1	PRE	CD38	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+69	0.89	1	0.8	aPD1	PRE	CXCL9	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+70	0.32	0.8	0.333333333333333	aPD1	PRE	MEX3B	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+71	0.93	1	0.866666666666667	aPD1	PRE	chemo_12	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+72	0.95	1	0.866666666666667	aPD1	PRE	POPLAR_teff	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+73	0.51	1	0.2	aPD1	PRE	proliferation	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+74	0.91	1	0.8	aPD1	PRE	teff_ifng	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+75	0.57	0.8	0.533333333333333	aPD1	PRE	stroma_emt	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+76	0.6	0.8	0.6	aPD1	PRE	tgfb	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+77	0.8	0.8	0.8	aPD1	PRE	mean_score	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+78	0.56	1	0.333333333333333	Unknown	PRE	CD38	Bill sc	Bill sc_Unknown_PRE	Single cell
+79	0.6	0.8	0.555555555555556	Unknown	PRE	CXCL9	Bill sc	Bill sc_Unknown_PRE	Single cell
+80	0.47	0.8	0.333333333333333	Unknown	PRE	CD274	Bill sc	Bill sc_Unknown_PRE	Single cell
+81	0.4	1	0.222222222222222	Unknown	PRE	MEX3B	Bill sc	Bill sc_Unknown_PRE	Single cell
+82	0.62	0.6	0.777777777777778	Unknown	PRE	chemo_12	Bill sc	Bill sc_Unknown_PRE	Single cell
+83	0.58	1	0.333333333333333	Unknown	PRE	POPLAR_teff	Bill sc	Bill sc_Unknown_PRE	Single cell
+84	0.27	0	1	Unknown	PRE	proliferation	Bill sc	Bill sc_Unknown_PRE	Single cell
+85	0.49	1	0.333333333333333	Unknown	PRE	teff_ifng	Bill sc	Bill sc_Unknown_PRE	Single cell
+86	0.33	0.2	0.888888888888889	Unknown	PRE	stroma_emt	Bill sc	Bill sc_Unknown_PRE	Single cell
+87	0.24	0	1	Unknown	PRE	tgfb	Bill sc	Bill sc_Unknown_PRE	Single cell
+88	0.71	1	0.444444444444444	Unknown	PRE	mean_score	Bill sc	Bill sc_Unknown_PRE	Single cell
+89	0.5	1	0.5	Mono	Post	CD38	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+90	0.33	1	0.333333333333333	Mono	Post	CXCL9	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+91	1	1	1	Mono	Post	CD274	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+92	0.33	1	0.333333333333333	Mono	Post	MEX3B	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+93	1	1	1	Mono	Post	chemo_12	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+94	0.33	1	0.333333333333333	Mono	Post	POPLAR_teff	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+95	0	0	1	Mono	Post	proliferation	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+96	0.67	1	0.666666666666667	Mono	Post	teff_ifng	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+97	1	1	1	Mono	Post	stroma_emt	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+98	0.67	1	0.666666666666667	Mono	Post	tgfb	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+99	0.83	1	0.833333333333333	Mono	Post	mean_score	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
+100	0.43	1	0.428571428571429	Mono	B1	CD38	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+101	0.29	1	0.285714285714286	Mono	B2	CD38	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+102	0.57	1	0.571428571428571	Mono	B1	CXCL9	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+103	0	0	1	Mono	B2	CXCL9	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+104	0.57	1	0.571428571428571	Mono	B1	CD274	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+105	1	1	1	Mono	B2	CD274	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+106	1	1	1	Mono	B1	MEX3B	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+107	0.14	1	0.142857142857143	Mono	B2	MEX3B	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+108	0.43	1	0.428571428571429	Mono	B1	chemo_12	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+109	0.57	1	0.571428571428571	Mono	B2	chemo_12	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+110	1	1	1	Mono	B1	POPLAR_teff	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+111	1	1	1	Mono	B2	POPLAR_teff	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+112	0.71	1	0.714285714285714	Mono	B1	proliferation	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+113	0.86	1	0.857142857142857	Mono	B2	proliferation	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+114	1	1	1	Mono	B1	teff_ifng	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+115	1	1	1	Mono	B2	teff_ifng	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+116	0.57	1	0.571428571428571	Mono	B1	stroma_emt	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+117	0	0	1	Mono	B2	stroma_emt	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+118	0.43	1	0.428571428571429	Mono	B1	tgfb	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+119	0.14	1	0.142857142857143	Mono	B2	tgfb	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+120	0.86	1	0.857142857142857	Mono	B1	mean_score	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
+121	0.86	1	0.857142857142857	Mono	B2	mean_score	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell

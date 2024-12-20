@@ -6,6 +6,8 @@ library(ggpubr)
 library('cutpointr')
 #library(immunarch)
 ## ------- Inputs and parameters -------
+cd8_t_obj=readRDS('/Volumes/Binbin_Kun/binbin/silvio/results/seurat/tcell/cd8/res0.2/annotated_seurat_res0.2.rds')
+
 tcr_meta=read.delim('../data/sc_tcr_meta.txt')
 teff_subtype_average_clone_size=read.delim('../data/teff_subtype_average_clone_size.txt')
 teff_subtype_extend_clone_fre=read.delim('../data/teff_subtype_extend_clone_fre.txt')
@@ -280,4 +282,16 @@ p = ggplot(data=df_plot, aes(x=timepoint, y=AUC, color=Group,fill=Group)) +
 
 ggsave(file.path(outdir,paste0('tcr','_auc_mouse.png')),p,width = 6,height = 3.5)
 
+## ------- Expression markers of transit T cell markers -------
+features=c('Cd101','Havcr2','Tcf7','Cx3cr1','Tbx21','Gzmb','Mki67')
+p=RidgePlot(cd8_t_obj$RNA, features = features, ncol = 2,group.by = 'Manually_curation',log = T)
+ggsave(file.path(outdir,paste0("T_transit_makers_ridge.pdf")), p,  width=16, height=20)
 
+DotPlot(cd8_t_obj$RNA, features = features,group.by = 'Manually_curation') + RotatedAxis()
+ggsave(file.path(outdir,paste0("T_transit_makers_dot.pdf")),  width=8, height=4)
+
+FeaturePlot(cd8_t_obj$RNA, features = c('Havcr2','Tcf7','Cx3cr1','Tbx21','Gzmb','Mki67'),ncol = 3)
+ggsave(file.path(outdir,paste0("T_transit_makers_feature.pdf")),  width=12, height=8)
+
+VlnPlot(cd8_t_obj$RNA, features = features,group.by = 'Manually_curation')
+ggsave(file.path(outdir,paste0("T_transit_makers_vln.pdf")),  width=12, height=12)

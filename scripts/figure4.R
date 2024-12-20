@@ -12,18 +12,42 @@ bulk_patient_score=readRDS('../data/bulk_patient_score.rds')
 tcga_hnsc=read.delim('../data/tcga_hnsc_mean_tb_score.txt')
 
 df_comb_filter=read.delim('../data/auc_teff_b_cell_patients.txt')
+df_compare_auc=read.delim('../data/auc_compare.txt')
+
 fixed_cutoff_odds_sum=read.delim('../data/fixed_cutoff_odds_sum.txt')
 fixed_cutoff=readRDS('../data/fix_cutoff.rds')
 
 ## -------F4B: AUC barplot -------=
 p=ggplot(data=df_comb_filter, aes(x=id, y=AUC,fill=sig_name)) +
-  geom_bar(stat="identity", position=position_dodge())+
-  geom_text(aes(label=AUC), position = position_dodge(0.9), vjust=1.6, color="white", size=2.5)+
+  geom_bar(stat="identity", position=position_dodge(),color='black')+
+  geom_text(aes(label=AUC), position = position_dodge(0.9), vjust=-0.5, color="black", size=1.75)+
   theme_classic() + theme(axis.text.x = element_text(hjust = 1,angle = 60))+xlab('')+
   facet_grid(~data_type,scales = 'free_x',space = "free")+scale_fill_brewer(palette="Dark2")
 
 p
-ggsave(file.path(outdir,'Teff_B_comb_filter_AUC.pdf'),p,width = 12,height = 5)
+ggsave(file.path(outdir,'Teff_B_comb_filter_AUC.pdf'),p,width = 8,height = 4.5)
+
+## ------- Comparasion between combine score and other public signatuer score -------
+# AUC
+colors <- c("#d62728", "#ff7f0e", "#2ca02c","#1f77b4" , "#9467bd",
+            "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
+            "#aec7e8", "#ffbb78", "#98df8a")
+sig_id=c('mean_score','teff_ifng','POPLAR_teff','proliferation','tgfb','stroma_emt','chemo_12','CD38','CXCL9','CD274','MEX3B')
+df_compare_auc$sig_name=factor(df_compare_auc$sig_name,levels = sig_id)
+p = ggplot(df_compare_auc, aes(x=sig_name, y=AUC)) +
+  geom_boxplot(color="#1f77b4",alpha=0.3,outlier.shape = NA) +
+  # Box plot with dot plot
+  geom_jitter(aes(colour = id,shape=id), position=position_jitter(0.2),size=2)+
+  theme_classic()+theme(axis.text.x = element_text(hjust = 0.5,vjust = 0.5,angle = 45))+
+  scale_color_manual(values=colors)+
+  scale_shape_manual(values=seq(0,15))+
+  xlab('')+
+  geom_hline(yintercept = 0.5,linetype='dashed',color="#d62728")
+p
+
+p = p + stat_compare_means(method = "wilcox.test",paired = T,ref.group = "mean_score",label='p.format',method.args = list(alternative = "less")) # other groups compare to ref group, the alternative here should be "less"
+p
+ggsave(file.path(outdir,'auc_compare.pdf'),p,width = 7,height = 3.5)
 
 ## ------- Identify fix threshold ------
 # Plot the odds ratios against cutoffs
