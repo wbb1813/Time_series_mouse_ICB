@@ -1,3 +1,5 @@
+library('devtools')
+devtools::install_github("junjunlab/ClusterGVis")
 library(ClusterGVis)
 library(clusterProfiler)
 library(biomaRt)
@@ -52,3 +54,27 @@ visCluster(object = non_cm,
            annoTerm.data = anno_non_df,
            line.side = "left")
 dev.off()
+
+## ------- Barplot of ML AUC -------
+single_tp_res=data.frame(timepoint=c('1','2','3','4'),AUC=c(0.62,0.79,0.7,0.79))
+diff_tp_res=data.frame(timepoint=c('T2-T1','T3-T1','T3-T2','T4-T1','T4-T2','T4-T3'),AUC=c(0.52,0.55,0.74,0.69,0.82,0.69))
+
+## single timepoint
+p = ggplot(data=single_tp_res, aes(x=timepoint, y=AUC)) +
+  geom_bar(stat="identity", position=position_dodge(width = 0.9),width = 0.8,color="black",fill='#66c2a5')+
+  geom_text(aes(label=signif(AUC,2)), vjust=-1, color="black",
+            position = position_dodge(0.9), size=2.5)+
+  #scale_color_brewer(palette="Dark2")+
+  theme_classic()
+p
+ggsave(file.path(outdir,paste0('single_timepoint_auc.pdf')),p,width = 3.5,height = 3)
+
+## diff timepoint
+p = ggplot(data=diff_tp_res, aes(x=timepoint, y=AUC)) +
+  geom_bar(stat="identity", position=position_dodge(width = 0.9),width = 0.8,color="black",fill='#fc8d62')+
+  geom_text(aes(label=signif(AUC,2)), vjust=-1, color="black",
+            position = position_dodge(0.9), size=2.5)+
+  #scale_color_brewer(palette="Dark2")+
+  theme_classic()
+p
+ggsave(file.path(outdir,paste0('diff_timepoint_auc.pdf')),p,width = 5,height = 3)

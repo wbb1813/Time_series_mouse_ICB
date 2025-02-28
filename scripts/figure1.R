@@ -2,10 +2,12 @@ library(ggplot2)
 library(Seurat)
 library(ggpubr)
 library(trend)
+library(Kendall)
+library(reshape)
 
 ## ------- Inputs and parameters -------
-allcell_abj=readRDS('/vf/users/Binbin_Kun/binbin/silvio/results/seurat/res0.6/annotated_seurat_res0.6.rds')
-
+#allcell_abj=readRDS('/vf/users/Binbin_Kun/binbin/silvio/results/seurat/res0.6/annotated_seurat_res0.6.rds')
+allcell_abj=readRDS('/Volumes/Binbin_Kun/binbin/silvio/results/seurat/res0.6/annotated_seurat_res0.6.rds')
 cell_abund=read.delim('../data/cell_abundance_timepoint.txt')
 cell_abund_sample=read.delim('../data/cell_abundance_sample_timepoint.txt')
 subtype_abund_sample=read.delim('../data/subtype_abund_sample_timepoint.txt')
@@ -54,9 +56,9 @@ box_line_plot=function(tmp_df,alternative='less',prefix){
     #stat_compare_means(comparisons = my_comparisons,method = 'wilcox.test')+ 
     xlab('Timepoints')+ylab('Relative frequency')
   if (alternative=='less'){
-    p = p + stat_compare_means(comparisons = my_comparisons,method = 'wilcox.test',method.args = list(alternative = "less"))
+    p = p + stat_compare_means(comparisons = my_comparisons,method = 'wilcox.test',method.args = list(alternative = "less"),label = "p.signif")
   } else if (alternative=='greater'){
-    p = p + stat_compare_means(comparisons = my_comparisons,method = 'wilcox.test',method.args = list(alternative = "greater"))
+    p = p + stat_compare_means(comparisons = my_comparisons,method = 'wilcox.test',method.args = list(alternative = "greater"),label = "p.signif")
   }
   ggsave(file.path(outdir,paste0(prefix,'.pdf')),p,width = 3.5,height = 4.5)
   return(p)
@@ -103,7 +105,7 @@ p3_3=box_line_plot(tmp_df,alternative='less',prefix='b_cell_all_sample')
 # Neutrophil cell 
 tmp_df=cell_abund_sample[which(cell_abund_sample$cell_type=='Neutrophil'),]
 tmp_df=na.omit(tmp_df)
-p3_4=box_line_plot(tmp_df,alternative='less',prefix='Neutrophil_all_sample')
+p3_4=box_line_plot(tmp_df,alternative='greater',prefix='Neutrophil_all_sample')
 
 ## ------- F1D: box plot of Teff, Th1 cell abundance between responders and non-responders -------
 ## Functions 
@@ -115,7 +117,7 @@ diff_abundance_box=function(cond1,cond2,prefix,alternative = "less"){
                  color = "Response", palette = "jco",
                  add = "jitter")
   # p = p + stat_compare_means(aes(group = Response),label = "p.format",method = 'wilcox.test',method.args = list(alternative = "less"))
-  p = p + stat_compare_means(aes(group = Response),label = "p.format",method = 'wilcox.test',method.args = list(alternative = alternative))
+  p = p + stat_compare_means(aes(group = Response),method = 'wilcox.test',method.args = list(alternative = alternative),label = "p.signif")
   
   # p = p + stat_compare_means(aes(group = Response),label = "p.format",method = 'wilcox.test')
   p
@@ -131,7 +133,7 @@ diff_abundance_line=function(cond1,cond2,prefix,alternative = "less"){
   p=ggline(df, x = "timepoint", y = "Relative_frequency", add = "mean_se",
          color = "Response", palette = "jco")+
     #stat_compare_means(aes(group = Response), label = "p.signif")
-    stat_compare_means(aes(group = Response),label = "p.format",method = 'wilcox.test',method.args = list(alternative = alternative))
+    stat_compare_means(aes(group = Response),method = 'wilcox.test',method.args = list(alternative = alternative),label = "p.signif")
   
   ggsave(file.path(outdir,paste0(prefix,'.pdf')),p,width = 6,height = 4)
   return(p)
@@ -271,3 +273,6 @@ f1_3=ggarrange(p5_1, p5_2, p5_3 + rremove("x.text"),
 p = ggarrange(f1_1,f1_2,f1_3,ncol = 1, nrow = 3)
 p
 ggsave('figure1.pdf',p,width = 17,height = 23)
+
+
+

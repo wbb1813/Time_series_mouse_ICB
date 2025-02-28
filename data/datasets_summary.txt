@@ -1,0 +1,9 @@
+Cohorts	Mouse sc	Mouse bulk	Allen et al. Pre	Luoma et al. PBMC Pre	Luoma et al. PBMC On/Post	Foy et al.Pre	INSPIRE Pre	Liu et al. On/Post	Liu et al. Pre	Obradovic et al. On/Post	Bill et al. Pre	Luoma et al. Tumor On/Post
+Availability	In-house	In-house	In-house	Public	Public	Public	Public	Public	Public	Public	Public	Public
+Speciman	PBMC	PBMC	PBMC	PBMC	PBMC	Tumor	Tumor	Tumor	Tumor	Tumor	Tumor	Tumor
+Data type	Singel cell	Bulk	Singel cell	Singel cell	Singel cell	Bulk	Bulk	Bulk	Bulk	Bulk	Singel cell	Singel cell
+sc_TCRseq	Yes	No	No	No	No	No	No	No	No	No	No	No
+Timepoint	Both	Both	Pre	Pre	Post	Pre	Pre	Post	Pre	Post	Pre	Post
+Samples size	16	45	20	16	14	102	65	12	11	20	14	13
+responders	7	15	9	4	4	11	12	4	3	5	5	3
+non-responder	9	30	11	12	10	91	53	8	8	15	9	10

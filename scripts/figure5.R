@@ -28,24 +28,25 @@ if (!dir.exists(outdir)){
 }
 ## -------  Calculate AUC R vs. NR across each timepoint RDI/RAI in mouse sc data -------
 auc_input_rdi=readRDS('../data/mouse_RDI_AUC.rds')
-ggplot(data=auc_input_rdi, aes(x=timepoint, y=auc, fill=group)) +
+auc_input_rdi_234=auc_input_rdi[which(auc_input_rdi$feature!='merge_feature'),]
+ggplot(data=auc_input_rdi_234, aes(x=timepoint, y=auc, fill=group)) +
   geom_bar(stat="identity", position=position_dodge(), color='black')+
   geom_text(aes(label=round(auc,2)), vjust=-0.3, size=3.5, position = position_dodge(0.9))+ 
   scale_y_continuous(expand=c(0,0),limits=c(0,1))+
   theme_pubr() +
   theme(legend.position = "right")+
   scale_fill_manual(values=c('#D0759F','#88BECD'))+
-  facet_wrap(~feature, scales='fixed')+
+  facet_wrap(~feature, scales='fixed',nrow = 1)+
   ylab('AUC')
 
-ggsave(file.path(outdir,'mouse_sc_auc_rdi_timepoint.png'),width = 6,height = 5)
+ggsave(file.path(outdir,'mouse_sc_auc_rdi_timepoint.pdf'),width = 7,height = 3.5)
 
 ## ------- AUC in patient cohorts -------
 df_auc=read.delim('../data/RDI_AUC_patients.txt')
 p=ggplot(data=df_auc, aes(x=Group, y=AUC)) +
-  geom_bar(stat="identity", fill="steelblue")+
-  geom_text(aes(label=signif(AUC,2)), vjust=1.6, color="white", size=3.5)+
-  theme_minimal() + theme(axis.text.x = element_text(hjust = 1,angle = 60))+xlab('')
+  geom_bar(stat="identity", fill="#88BECD",color='black')+
+  geom_text(aes(label=signif(AUC,2)), vjust=-0.5, color="black", size=3.5)+
+  theme_classic() + theme(axis.text.x = element_text(hjust = 1,angle = 60))+xlab('')
 p
 ggsave(file.path(outdir,paste0('mouse_IRIS_interaction_bulk_patient_AUC.pdf')),p,width = 5,height = 4.5)
 

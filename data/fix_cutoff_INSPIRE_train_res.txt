@@ -1,0 +1,2 @@
+best_cutoff	best_odds_ratio	Timepoint	Treatment
+1	0.203929895257617	5	PRE	aPD1

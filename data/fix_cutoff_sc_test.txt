@@ -1,0 +1,6 @@
+odds_ratio	Timepoint	Treatment	cohort	Type	id
+1	2.5	PRE	Unknown	Bill	Testing	Bill_Unknown_PRE
+4	6	Post	Mono	Luoma_tumor	Testing	Luoma_tumor_Mono_Post
+6	7	B1	Mono	Luoma_pbmc	Testing	Luoma_pbmc_Mono_B1
+7	7	B2	Mono	Luoma_pbmc	Testing	Luoma_pbmc_Mono_B2
+12	4	Pre	aPD1	Training	Training	Training_aPD1_Pre

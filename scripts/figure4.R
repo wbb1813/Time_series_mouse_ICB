@@ -11,21 +11,38 @@ if (!dir.exists(outdir)){
 bulk_patient_score=readRDS('../data/bulk_patient_score.rds')
 tcga_hnsc=read.delim('../data/tcga_hnsc_mean_tb_score.txt')
 
-df_comb_filter=read.delim('../data/auc_teff_b_cell_patients.txt')
+df_comb_filter_pbmc=read.delim('../data/Teff_B_comb_AUC_PBMC.txt')
+df_comb_filter_tumor=read.delim('../data/Teff_B_comb_AUC_tumor.txt')
 df_compare_auc=read.delim('../data/auc_compare.txt')
 
-fixed_cutoff_odds_sum=read.delim('../data/fixed_cutoff_odds_sum.txt')
-fixed_cutoff=readRDS('../data/fix_cutoff.rds')
+bulk_fixed_cutoff_odds_sum=read.delim('../data/fix_cutoff_bulk_test.txt')
+sc_fixed_cutoff_odds_sum=read.delim('../data/fix_cutoff_sc_test.txt')
+#fixed_cutoff=readRDS('../data/fix_cutoff.rds')
 
-## -------F4B: AUC barplot -------=
-p=ggplot(data=df_comb_filter, aes(x=id, y=AUC,fill=sig_name)) +
+## -------F4A: PBMC AUC barplot -------
+## PBMC
+df_comb_filter_pbmc$data_type='PBMC single-cell'
+df_comb_filter_pbmc$sig_name=factor(df_comb_filter_pbmc$sig_name,levels = c('t2_Effector memory CD8','t2_B cell','mean_score'))
+p=ggplot(data=df_comb_filter_pbmc, aes(x=id, y=AUC,fill=sig_name)) +
   geom_bar(stat="identity", position=position_dodge(),color='black')+
   geom_text(aes(label=AUC), position = position_dodge(0.9), vjust=-0.5, color="black", size=1.75)+
   theme_classic() + theme(axis.text.x = element_text(hjust = 1,angle = 60))+xlab('')+
-  facet_grid(~data_type,scales = 'free_x',space = "free")+scale_fill_brewer(palette="Dark2")
+  facet_grid(~data_type,scales = 'free_x',space = "free")+scale_fill_brewer(palette="Set2")
 
 p
-ggsave(file.path(outdir,'Teff_B_comb_filter_AUC.pdf'),p,width = 8,height = 4.5)
+ggsave(file.path(outdir,'Teff_B_comb_filter_AUC_pbmc.pdf'),p,width = 5,height = 4.5)
+
+## Tumor
+df_comb_filter_tumor$data_type=ifelse(df_comb_filter_tumor$data_type=='Bulk','Tumor bulk','Tumor single-cell')
+df_comb_filter_tumor$sig_name=factor(df_comb_filter_tumor$sig_name,levels = c('t2_Effector memory CD8','t2_B cell','mean_score'))
+p=ggplot(data=df_comb_filter_tumor, aes(x=id, y=AUC,fill=sig_name)) +
+  geom_bar(stat="identity", position=position_dodge(),color='black')+
+  geom_text(aes(label=AUC), position = position_dodge(0.9), vjust=-0.5, color="black", size=1.75)+
+  theme_classic() + theme(axis.text.x = element_text(hjust = 1,angle = 60))+xlab('')+
+  facet_grid(~data_type,scales = 'free_x',space = "free")+scale_fill_brewer(palette="Set2")
+
+p
+ggsave(file.path(outdir,'Teff_B_comb_filter_AUC_tumor.pdf'),p,width = 10,height = 4.5)
 
 ## ------- Comparasion between combine score and other public signatuer score -------
 # AUC
@@ -33,6 +50,7 @@ colors <- c("#d62728", "#ff7f0e", "#2ca02c","#1f77b4" , "#9467bd",
             "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
             "#aec7e8", "#ffbb78", "#98df8a")
 sig_id=c('mean_score','teff_ifng','POPLAR_teff','proliferation','tgfb','stroma_emt','chemo_12','CD38','CXCL9','CD274','MEX3B')
+df_compare_auc=df_compare_auc[which(df_compare_auc$id!='Luoma_tumor_sc_Combo_Post'),]
 df_compare_auc$sig_name=factor(df_compare_auc$sig_name,levels = sig_id)
 p = ggplot(df_compare_auc, aes(x=sig_name, y=AUC)) +
   geom_boxplot(color="#1f77b4",alpha=0.3,outlier.shape = NA) +
@@ -45,23 +63,24 @@ p = ggplot(df_compare_auc, aes(x=sig_name, y=AUC)) +
   geom_hline(yintercept = 0.5,linetype='dashed',color="#d62728")
 p
 
-p = p + stat_compare_means(method = "wilcox.test",paired = T,ref.group = "mean_score",label='p.format',method.args = list(alternative = "less")) # other groups compare to ref group, the alternative here should be "less"
+p = p + stat_compare_means(method = "wilcox.test",paired = T,ref.group = "mean_score",label='p.signif',method.args = list(alternative = "less")) # other groups compare to ref group, the alternative here should be "less"
 p
 ggsave(file.path(outdir,'auc_compare.pdf'),p,width = 7,height = 3.5)
 
 ## ------- Identify fix threshold ------
-# Plot the odds ratios against cutoffs
-pdf(file.path(outdir,'fixed_threshold_max_odds.pdf'),width = 4,height = 3)
-plot(fixed_cutoff$cutoffs, fixed_cutoff$odds_ratios, type = "l", xlab = "Cutoff", ylab = "Odds Ratio", main = "Maximizing Odds Ratio")
-abline(v = fixed_cutoff$best_cutoff, col = "red", lty = 2)
-dev.off()
+# # Plot the odds ratios against cutoffs
+# pdf(file.path(outdir,'fixed_threshold_max_odds.pdf'),width = 4,height = 3)
+# plot(fixed_cutoff$cutoffs, fixed_cutoff$odds_ratios, type = "l", xlab = "Cutoff", ylab = "Odds Ratio", main = "Maximizing Odds Ratio")
+# abline(v = fixed_cutoff$best_cutoff, col = "red", lty = 2)
+# dev.off()
 
 ## ------- Test fixed threshold in testing cohorts -------
-p=ggplot(fixed_cutoff_odds_sum, aes(x = id, y = odds_ratio, fill = Type)) +
+## single cell
+p=ggplot(sc_fixed_cutoff_odds_sum, aes(x = id, y = odds_ratio, fill = Type)) +
   geom_bar(stat = "identity", color = "black", width = 0.7) +  # Adds a black border to bars
   scale_fill_manual(values = c("Training" = "#D55E00", "Testing" = "#009E73")) +  # Dark orange and teal+
   geom_text(aes(label=signif(odds_ratio,2)), vjust=-0.3, size=3.5)+
-  theme_minimal() +
+  theme_classic() +
   labs(
     x = "Cohort",
     y = "Odds Ratio",
@@ -72,8 +91,24 @@ p=ggplot(fixed_cutoff_odds_sum, aes(x = id, y = odds_ratio, fill = Type)) +
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
 p
-ggsave(file.path(outdir,'odds_ratio_train_test.pdf'),p,width = 4,height = 3.5)
-
+ggsave(file.path(outdir,'odds_ratio_train_test_sc.pdf'),p,width = 3.5,height = 3.5)
+## Bulk
+p=ggplot(bulk_fixed_cutoff_odds_sum, aes(x = id, y = odds_ratio, fill = Type)) +
+  geom_bar(stat = "identity", color = "black", width = 0.7) +  # Adds a black border to bars
+  scale_fill_manual(values = c("Training" = "#D55E00", "Testing" = "#009E73")) +  # Dark orange and teal+
+  geom_text(aes(label=signif(odds_ratio,2)), vjust=-0.3, size=3.5)+
+  theme_classic() +
+  labs(
+    x = "Cohort",
+    y = "Odds Ratio",
+    fill = "Cohort Type"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+p
+ggsave(file.path(outdir,'odds_ratio_train_test_bulk.pdf'),p,width = 4,height = 3.5)
 ## ------- Survival analysis -------
 ## Functions 
 hr_plot=function(df,surv_time,surv_status,sex_info,fig_title,xlim=3.5,width = 3,height = 5,prefix){
