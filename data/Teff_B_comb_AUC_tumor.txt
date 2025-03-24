@@ -1,0 +1,28 @@
+AUC	sensitivity	specificity	group	timepoint	sig_name	Cohort	id	data_type
+1	0.57	0.727272727272727	0.461538461538462	aPD1	PRE	t2_B cell	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+2	0.77	0.909090909090909	0.615384615384615	aPD1	PRE	t2_Effector memory CD8	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+3	0.74	1	0.494505494505495	aPD1	PRE	mean_score	Foy1_2022	Foy1_2022_aPD1_PRE	Bulk
+4	0.69	0.75	0.875	aPD1	ON/POST	t2_B cell	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+5	0.62	0.333333333333333	1	aPD1	PRE	t2_B cell	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+6	0.69	0.75	0.875	aPD1	ON/POST	t2_Effector memory CD8	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+7	0.88	1	0.75	aPD1	PRE	t2_Effector memory CD8	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+8	0.69	0.75	0.875	aPD1	ON/POST	mean_score	Liu_2021	Liu_2021_aPD1_ON/POST	Bulk
+9	0.83	1	0.625	aPD1	PRE	mean_score	Liu_2021	Liu_2021_aPD1_PRE	Bulk
+10	0.9	1	0.9	aPD1	PRE	t2_B cell	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+11	0.8	1	0.7	aPD1	PRE	t2_Effector memory CD8	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+12	0.85	1	0.8	aPD1	PRE	mean_score	INSPIRE	INSPIRE_aPD1_PRE	Bulk
+13	0.89	0.666666666666667	1	aPD1	PRE	t2_B cell	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+14	1	1	1	aPD1	ON/POST	t2_B cell	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+15	1	1	1	aPD1	PRE	t2_Effector memory CD8	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+16	1	1	1	aPD1	ON/POST	t2_Effector memory CD8	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+17	0.89	0.666666666666667	1	aPD1	PRE	mean_score	Aoki_2021	Aoki_2021_aPD1_PRE	Bulk
+18	1	1	1	aPD1	ON/POST	mean_score	Aoki_2021	Aoki_2021_aPD1_ON/POST	Bulk
+19	0.79	1	0.533333333333333	aPD1	PRE	t2_B cell	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+20	0.81	0.6	0.866666666666667	aPD1	PRE	t2_Effector memory CD8	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+21	0.8	0.8	0.8	aPD1	PRE	mean_score	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
+22	0.76	0.8	0.666666666666667	Unknown	PRE	t2_B cell	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+23	0.64	1	0.444444444444444	Unknown	PRE	t2_Effector memory CD8	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+24	0.71	1	0.444444444444444	Unknown	PRE	mean_score	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+25	0.83	1	0.833333333333333	Mono	Post	t2_B cell	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+26	0.67	1	0.666666666666667	Mono	Post	t2_Effector memory CD8	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+27	0.83	1	0.833333333333333	Mono	Post	mean_score	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell

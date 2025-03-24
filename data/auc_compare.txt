@@ -76,47 +76,69 @@ AUC	sensitivity	specificity	group	timepoint	sig_name	Cohort	id	data_type
 75	0.57	0.8	0.533333333333333	aPD1	PRE	stroma_emt	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
 76	0.6	0.8	0.6	aPD1	PRE	tgfb	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
 77	0.8	0.8	0.8	aPD1	PRE	mean_score	Obradovic2_2022	Obradovic2_2022_aPD1_PRE	Bulk
-78	0.56	1	0.333333333333333	Unknown	PRE	CD38	Bill sc	Bill sc_Unknown_PRE	Single cell
-79	0.6	0.8	0.555555555555556	Unknown	PRE	CXCL9	Bill sc	Bill sc_Unknown_PRE	Single cell
-80	0.47	0.8	0.333333333333333	Unknown	PRE	CD274	Bill sc	Bill sc_Unknown_PRE	Single cell
-81	0.4	1	0.222222222222222	Unknown	PRE	MEX3B	Bill sc	Bill sc_Unknown_PRE	Single cell
-82	0.62	0.6	0.777777777777778	Unknown	PRE	chemo_12	Bill sc	Bill sc_Unknown_PRE	Single cell
-83	0.58	1	0.333333333333333	Unknown	PRE	POPLAR_teff	Bill sc	Bill sc_Unknown_PRE	Single cell
-84	0.27	0	1	Unknown	PRE	proliferation	Bill sc	Bill sc_Unknown_PRE	Single cell
-85	0.49	1	0.333333333333333	Unknown	PRE	teff_ifng	Bill sc	Bill sc_Unknown_PRE	Single cell
-86	0.33	0.2	0.888888888888889	Unknown	PRE	stroma_emt	Bill sc	Bill sc_Unknown_PRE	Single cell
-87	0.24	0	1	Unknown	PRE	tgfb	Bill sc	Bill sc_Unknown_PRE	Single cell
-88	0.71	1	0.444444444444444	Unknown	PRE	mean_score	Bill sc	Bill sc_Unknown_PRE	Single cell
-89	0.5	1	0.5	Mono	Post	CD38	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
-90	0.33	1	0.333333333333333	Mono	Post	CXCL9	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
-91	1	1	1	Mono	Post	CD274	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
-92	0.33	1	0.333333333333333	Mono	Post	MEX3B	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
-93	1	1	1	Mono	Post	chemo_12	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
-94	0.33	1	0.333333333333333	Mono	Post	POPLAR_teff	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
-95	0	0	1	Mono	Post	proliferation	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
-96	0.67	1	0.666666666666667	Mono	Post	teff_ifng	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
-97	1	1	1	Mono	Post	stroma_emt	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
-98	0.67	1	0.666666666666667	Mono	Post	tgfb	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
-99	0.83	1	0.833333333333333	Mono	Post	mean_score	Luoma tumor sc	Luoma tumor sc_Mono_Post	Single cell
-100	0.43	1	0.428571428571429	Mono	B1	CD38	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
-101	0.29	1	0.285714285714286	Mono	B2	CD38	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
-102	0.57	1	0.571428571428571	Mono	B1	CXCL9	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
-103	0	0	1	Mono	B2	CXCL9	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
-104	0.57	1	0.571428571428571	Mono	B1	CD274	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
-105	1	1	1	Mono	B2	CD274	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
-106	1	1	1	Mono	B1	MEX3B	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
-107	0.14	1	0.142857142857143	Mono	B2	MEX3B	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
-108	0.43	1	0.428571428571429	Mono	B1	chemo_12	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
-109	0.57	1	0.571428571428571	Mono	B2	chemo_12	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
-110	1	1	1	Mono	B1	POPLAR_teff	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
-111	1	1	1	Mono	B2	POPLAR_teff	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
-112	0.71	1	0.714285714285714	Mono	B1	proliferation	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
-113	0.86	1	0.857142857142857	Mono	B2	proliferation	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
-114	1	1	1	Mono	B1	teff_ifng	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
-115	1	1	1	Mono	B2	teff_ifng	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
-116	0.57	1	0.571428571428571	Mono	B1	stroma_emt	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
-117	0	0	1	Mono	B2	stroma_emt	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
-118	0.43	1	0.428571428571429	Mono	B1	tgfb	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
-119	0.14	1	0.142857142857143	Mono	B2	tgfb	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
-120	0.86	1	0.857142857142857	Mono	B1	mean_score	Luoma pbmc sc	Luoma pbmc sc_Mono_B1	Single cell
-121	0.86	1	0.857142857142857	Mono	B2	mean_score	Luoma pbmc sc	Luoma pbmc sc_Mono_B2	Single cell
+78	0.56	1	0.333333333333333	Unknown	PRE	CD38	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+79	0.6	0.8	0.555555555555556	Unknown	PRE	CXCL9	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+80	0.47	0.8	0.333333333333333	Unknown	PRE	CD274	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+81	0.4	1	0.222222222222222	Unknown	PRE	MEX3B	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+82	0.62	0.6	0.777777777777778	Unknown	PRE	chemo_12	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+83	0.58	1	0.333333333333333	Unknown	PRE	POPLAR_teff	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+84	0.27	0	1	Unknown	PRE	proliferation	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+85	0.49	1	0.333333333333333	Unknown	PRE	teff_ifng	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+86	0.33	0.2	0.888888888888889	Unknown	PRE	stroma_emt	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+87	0.24	0	1	Unknown	PRE	tgfb	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+88	0.71	1	0.444444444444444	Unknown	PRE	mean_score	Bill_sc	Bill_sc_Unknown_PRE	Single cell
+89	0.75	1	0.75	Combo	Post	CD38	Luoma_tumor_sc	Luoma_tumor_sc_Combo_Post	Single cell
+90	0.5	1	0.5	Mono	Post	CD38	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+91	0.88	1	0.75	Combo	Post	CXCL9	Luoma_tumor_sc	Luoma_tumor_sc_Combo_Post	Single cell
+92	0.33	1	0.333333333333333	Mono	Post	CXCL9	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+93	0.75	0.5	0.75	Combo	Post	CD274	Luoma_tumor_sc	Luoma_tumor_sc_Combo_Post	Single cell
+94	1	1	1	Mono	Post	CD274	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+95	0.88	1	0.75	Combo	Post	MEX3B	Luoma_tumor_sc	Luoma_tumor_sc_Combo_Post	Single cell
+96	0.33	1	0.333333333333333	Mono	Post	MEX3B	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+97	0.75	0.5	0.75	Combo	Post	chemo_12	Luoma_tumor_sc	Luoma_tumor_sc_Combo_Post	Single cell
+98	1	1	1	Mono	Post	chemo_12	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+99	0.75	0.5	0.75	Combo	Post	POPLAR_teff	Luoma_tumor_sc	Luoma_tumor_sc_Combo_Post	Single cell
+100	0.33	1	0.333333333333333	Mono	Post	POPLAR_teff	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+101	0.38	0.5	0.75	Combo	Post	proliferation	Luoma_tumor_sc	Luoma_tumor_sc_Combo_Post	Single cell
+102	0	0	1	Mono	Post	proliferation	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+103	0.5	1	0.5	Combo	Post	teff_ifng	Luoma_tumor_sc	Luoma_tumor_sc_Combo_Post	Single cell
+104	0.67	1	0.666666666666667	Mono	Post	teff_ifng	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+105	0.75	0.5	0.75	Combo	Post	stroma_emt	Luoma_tumor_sc	Luoma_tumor_sc_Combo_Post	Single cell
+106	1	1	1	Mono	Post	stroma_emt	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+107	0.5	0.5	1	Combo	Post	tgfb	Luoma_tumor_sc	Luoma_tumor_sc_Combo_Post	Single cell
+108	0.67	1	0.666666666666667	Mono	Post	tgfb	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+109	0.5	0.5	1	Combo	Post	mean_score	Luoma_tumor_sc	Luoma_tumor_sc_Combo_Post	Single cell
+110	0.83	1	0.833333333333333	Mono	Post	mean_score	Luoma_tumor_sc	Luoma_tumor_sc_Mono_Post	Single cell
+111	0.43	1	0.428571428571429	Mono	B1	CD38	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	Single cell
+112	0.29	1	0.285714285714286	Mono	B2	CD38	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	Single cell
+113	0.57	1	0.571428571428571	Mono	B1	CXCL9	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	Single cell
+114	0	0	1	Mono	B2	CXCL9	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	Single cell
+115	0.57	1	0.571428571428571	Mono	B1	CD274	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	Single cell
+116	1	1	1	Mono	B2	CD274	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	Single cell
+117	1	1	1	Mono	B1	MEX3B	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	Single cell
+118	0.14	1	0.142857142857143	Mono	B2	MEX3B	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	Single cell
+119	0.43	1	0.428571428571429	Mono	B1	chemo_12	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	Single cell
+120	0.57	1	0.571428571428571	Mono	B2	chemo_12	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	Single cell
+121	1	1	1	Mono	B1	POPLAR_teff	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	Single cell
+122	1	1	1	Mono	B2	POPLAR_teff	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	Single cell
+123	0.71	1	0.714285714285714	Mono	B1	proliferation	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	Single cell
+124	0.86	1	0.857142857142857	Mono	B2	proliferation	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	Single cell
+125	1	1	1	Mono	B1	teff_ifng	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	Single cell
+126	1	1	1	Mono	B2	teff_ifng	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	Single cell
+127	0.57	1	0.571428571428571	Mono	B1	stroma_emt	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	Single cell
+128	0	0	1	Mono	B2	stroma_emt	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	Single cell
+129	0.43	1	0.428571428571429	Mono	B1	tgfb	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	Single cell
+130	0.14	1	0.142857142857143	Mono	B2	tgfb	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	Single cell
+131	0.86	1	0.857142857142857	Mono	B1	mean_score	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	Single cell
+132	0.86	1	0.857142857142857	Mono	B2	mean_score	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	Single cell
+133	0.66	0.666666666666667	0.636363636363636	aPD1	Pre	CD38	Clint	Clint_aPD1_Pre	Single cell
+134	0.42	1	0.181818181818182	aPD1	Pre	CD274	Clint	Clint_aPD1_Pre	Single cell
+135	0.45	0	1	aPD1	Pre	CXCL9	Clint	Clint_aPD1_Pre	Single cell
+136	0.38	0.111111111111111	0.909090909090909	aPD1	Pre	MEX3B	Clint	Clint_aPD1_Pre	Single cell
+137	0.53	0.222222222222222	1	aPD1	Pre	chemo_12	Clint	Clint_aPD1_Pre	Single cell
+138	0.6	1	0.272727272727273	aPD1	Pre	POPLAR_teff	Clint	Clint_aPD1_Pre	Single cell
+139	0.65	0.777777777777778	0.636363636363636	aPD1	Pre	proliferation	Clint	Clint_aPD1_Pre	Single cell
+140	0.64	1	0.454545454545455	aPD1	Pre	teff_ifng	Clint	Clint_aPD1_Pre	Single cell
+141	0.43	0.666666666666667	0.454545454545455	aPD1	Pre	stroma_emt	Clint	Clint_aPD1_Pre	Single cell
+142	0.42	0.444444444444444	0.727272727272727	aPD1	Pre	tgfb	Clint	Clint_aPD1_Pre	Single cell
+143	0.69	0.777777777777778	0.818181818181818	aPD1	Pre	mean_score	Clint	Clint_aPD1_Pre	Single cell

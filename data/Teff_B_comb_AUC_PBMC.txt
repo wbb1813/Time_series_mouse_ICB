@@ -1,0 +1,10 @@
+AUC	sensitivity	specificity	group	timepoint	sig_name	Cohort	id	data_type
+1	0.71	1	0.714285714285714	Mono	B1	t2_B cell	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	PBMC
+2	0.86	1	0.857142857142857	Mono	B2	t2_B cell	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	PBMC
+3	0.57	1	0.571428571428571	Mono	B1	t2_Effector memory CD8	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	PBMC
+4	0.86	1	0.857142857142857	Mono	B2	t2_Effector memory CD8	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	PBMC
+5	0.86	1	0.857142857142857	Mono	B1	mean_score	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B1	PBMC
+6	0.86	1	0.857142857142857	Mono	B2	mean_score	Luoma_pbmc_sc	Luoma_pbmc_sc_Mono_B2	PBMC
+7	0.64	0.888888888888889	0.454545454545455	aPD1	Pre	t2_B cell	Clint	Clint_aPD1_Pre	PBMC
+8	0.63	0.666666666666667	0.727272727272727	aPD1	Pre	t2_Effector memory CD8	Clint	Clint_aPD1_Pre	PBMC
+9	0.69	0.777777777777778	0.818181818181818	aPD1	Pre	mean_score	Clint	Clint_aPD1_Pre	PBMC
