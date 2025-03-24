@@ -1,485 +1,279 @@
-library(slingshot)
 library(ggplot2)
 library(Seurat)
-library(reshape)
 library(ggpubr)
-library('cutpointr')
-#library(immunarch)
+library(trend)
+library(Kendall)
+library(reshape)
+
 ## ------- Inputs and parameters -------
-cd8_t_obj=readRDS('/Volumes/Binbin_Kun/binbin/silvio/results/seurat/tcell/cd8/res0.2/annotated_seurat_res0.2.rds')
+#allcell_abj=readRDS('/vf/users/Binbin_Kun/binbin/silvio/results/seurat/res0.6/annotated_seurat_res0.6.rds')
+allcell_abj=readRDS('/Volumes/Binbin_Kun/binbin/silvio/results/seurat/res0.6/annotated_seurat_res0.6.rds')
+cell_abund=read.delim('../data/cell_abundance_timepoint.txt')
+cell_abund_sample=read.delim('../data/cell_abundance_sample_timepoint.txt')
+subtype_abund_sample=read.delim('../data/subtype_abund_sample_timepoint.txt')
 
-tcr_meta=read.delim('../data/sc_tcr_meta.txt')
-teff_subtype_average_clone_size=read.delim('../data/teff_subtype_average_clone_size.txt')
-teff_subtype_extend_clone_fre=read.delim('../data/teff_subtype_extend_clone_fre.txt')
-
-sample_average_clone_size=read.delim('../data/sample_average_clone_size.txt')
-
-bulk_tcr_div_inv_simp=read.delim('../data/bulk_tcr_div_inv_simp.txt')
-bulk_bcr_div_inv_simp=read.delim('../data/bulk_bcr_div_inv_simp.txt')
-
-cd4_tcr_meta=read.delim('../data/sc_cd4_tcr_meta.txt')
-
-patient_meta=read.delim('../data/LiBIO_scRNA_sample_Summary_metrics.txt')
-
-## Outputs 
 outdir='../results/figure2'
+
 if (!dir.exists(outdir)){
   dir.create(outdir,recursive = T)
 }
 
-## ------- F2A: UMAP of CD8 T cells -------
+## ------- F1A: UMAP of all cells -------
+p1 = DimPlot(allcell_abj$RNA, reduction = "umap", label = F, repel = F, group.by = 'merged_tcell',
+            cols = c('Erythroblast' = '#D95F02', "CD8 T" = '#E7298A',"CD4 T" = '#B22222', "B cell"  = '#7570B3',
+                     "Monocyte"  = '#1B9E77',"NK cell"  = '#66A61E',"Neutrophil"  = '#E6AB02',
+                     "Dendritic cell"  = '#A6761D',"Basophil"  = '#666666'),raster=FALSE) + ggtitle("")
+p1
+ggsave(file.path(outdir,'f1a_all_cell_umap.png'), p1,  width=6, height=4)
+
+## ------- F1B: abundance of major cell types across timepoints (merge samples in each timepoint) -------
+cols = c('Erythroblast' = '#D95F02', "CD8 T" = '#E7298A',"CD4 T" = '#B22222', "B cell"  = '#7570B3',
+         "Monocyte"  = '#1B9E77',"NK cell"  = '#66A61E',"Neutrophil"  = '#E6AB02',
+         "Dendritic cell"  = '#A6761D',"Basophil"  = '#666666')
+
+p2 = ggplot(data=cell_abund, aes(x=timepoint, y=Relative_frequency, fill=cell_type)) +
+  geom_bar(stat="identity")+
+  scale_fill_manual(values = cols)+
+  theme_classic()+ylab('Relative frequency')+xlab('Timepoint')+
+  theme(legend.title=element_blank())
+p2
+
+ggsave(file.path(outdir,'f1b_all_cell_abundace_timepoint.pdf'),p2,width = 3.5,height = 4)
+
+## ------- F1C: box plot of CD8, CD4, B cell, and Neutrophil cell abundance at different time points -------
 ## Functions 
-tcr_umap=function(df,prefix){
-  tcr_meta_clone1=df[which(df$frequency==1),]
-  tcr_meta_clone_g1=df[which(df$frequency>1),]
-  sp2<-ggplot() + 
-    geom_point(data = tcr_meta_clone1, aes(x=umap_1, y=umap_2, color=frequency),size=0.2)+
-    geom_point(data = tcr_meta_clone_g1, aes(x=umap_1, y=umap_2, color=frequency),size=0.2)+
-    #scale_color_gradient(low="#AED6F1", high="#FC4E07")+theme_classic()
-    scale_color_gradient(low="#66c2a5", high="#FC4E07")+theme_classic()
-  sp2
-  
-  ggsave(file.path(outdir,paste0(prefix,'_clonetype.pdf')),sp2,width = 4.5,height = 3.5)
-  return(sp2)
+box_line_plot=function(tmp_df,alternative='less',prefix){
+  my_comparisons <- list( c("1", "2"),c("2", "3"),c("3", "4"),c("1", "3"),c("1", "4"))
+  p=ggplot(tmp_df, aes(x = timepoint, y = Relative_frequency)) + 
+    # geom_boxplot(aes(fill = Group)) +
+    geom_boxplot(aes(fill = timepoint),alpha=0.5, width=0.5) +
+    geom_line(aes(group = Patient),color='gray45') + 
+    #geom_point(size = 2, aes(color = Group))+ 
+    geom_point(size = 2, color = 'black')+ 
+    theme_classic()+
+    theme(legend.position = "none")+
+    #stat_compare_means(comparisons = my_comparisons,paired = TRUE)
+    #stat_compare_means(comparisons = my_comparisons,method = 'wilcox.test',method.args = list(alternative = "greater"))+
+    #stat_compare_means(comparisons = my_comparisons,method = 'wilcox.test')+ 
+    xlab('Timepoints')+ylab('Relative frequency')
+  if (alternative=='less'){
+    p = p + stat_compare_means(comparisons = my_comparisons,method = 'wilcox.test',method.args = list(alternative = "less"),label = "p.signif")
+  } else if (alternative=='greater'){
+    p = p + stat_compare_means(comparisons = my_comparisons,method = 'wilcox.test',method.args = list(alternative = "greater"),label = "p.signif")
+  }
+  ggsave(file.path(outdir,paste0(prefix,'.pdf')),p,width = 3.5,height = 4.5)
+  return(p)
 }
 
-## UMAP of CD8 T cells of all samples 
-
-cd8_all_tcr_umap=tcr_umap(df=tcr_meta,prefix='cd8t_all_samples')
-
-# UMAP of CD8 T cells of responders, non-responder
-responder_samples=patient_meta$Sample.Name[which(patient_meta$group=='responder')]
-nonresponder_samples=patient_meta$Sample.Name[which(patient_meta$group%in%c('non-responder','stable/escape'))]
-
-responder_tcr_meta=tcr_meta[which(tcr_meta$sample_id2%in%responder_samples),]
-nonresponder_tcr_meta=tcr_meta[which(tcr_meta$sample_id2%in%nonresponder_samples),]
-
-cd8_res_tcr_umap=tcr_umap(df=responder_tcr_meta,prefix='cd8t_responders')
-cd8_non_tcr_umap=tcr_umap(df=nonresponder_tcr_meta,prefix='cd8t_nonresponder')
-
-## ------- Distribution of expanded clones ------- 
-tcr_meta_efftcell=tcr_meta[which(tcr_meta$Manually_curation=='Effector memory CD8'),]
-tcr_meta_othertcell=tcr_meta[which(tcr_meta$cell_id%in%setdiff(tcr_meta$cell_id,tcr_meta_efftcell$cell_id)),]
-
-tcr_meta_efftcell_te=tcr_meta_efftcell[which(tcr_meta_efftcell$frequency>=2),]
-tcr_meta_efftcell_ne=tcr_meta_efftcell[which(tcr_meta_efftcell$frequency==1),]
-
-tcr_meta_othertcell_te=tcr_meta_othertcell[which(tcr_meta_othertcell$frequency>=2),]
-tcr_meta_othertcell_ne=tcr_meta_othertcell[which(tcr_meta_othertcell$frequency==1),]
-
-eff_other_2b2=data.frame(te=c(nrow(tcr_meta_efftcell_te),nrow(tcr_meta_othertcell_te)),ne=c(nrow(tcr_meta_efftcell_ne),nrow(tcr_meta_othertcell_ne)),row.names = c('effect','other'))
-test_res=fisher.test(eff_other_2b2,alternative = 'greater')
-format.pval(test_res$p.value,digits = 20)
-# barplot 
-tmp_df=as.data.frame(t(eff_other_2b2))
-tmp_df$group=rownames(tmp_df)
-
-df_eff=tmp_df[,c('effect','group')]
-colnames(df_eff)[1]='cell_number'
-df_eff$Freq=df_eff$cell_number/sum(df_eff$cell_number)
-df_eff$Group2='Tem'
-
-df_other=tmp_df[,c('other','group')]
-colnames(df_other)[1]='cell_number'
-df_other$Freq=df_other$cell_number/sum(df_other$cell_number)
-df_other$Group2='Other T'
-
-df=rbind(df_eff,df_other)
-df$group[which(df$group=='te')]='Expanded'
-df$group[which(df$group=='ne')]='Non-expanded'
-df$group=factor(df$group,c('Non-expanded','Expanded'))
-
-p=ggplot(data=df, aes(x=Group2, y=Freq, fill=group)) +
-  geom_bar(stat="identity",width = 0.7)+
-  theme_classic()+xlab('')+
-  geom_text(x=1, y=1.05, label=paste0('P: ',test_res$p.value))+
-  geom_text(x=2, y=1.05, label=paste0('Odds: ',signif(test_res$estimate,4)))+
-  #scale_fill_brewer(palette="Dark2")+"
-  scale_fill_manual(values=c("#66c2a5","#fc8d62"))
-  #expand_limits(y = c(0, 1.05))+theme(legend.title = element_blank() )
-p
-ggsave(file.path(outdir,paste0('cd8t','_clonetype_distribution.pdf')),p,width = 4,height = 4)
-
-## ======= Clonal expansion index (average clonotype size) across time points  =======
-## Functions
-# boxplot compare responders with non-responders 
-twogroup_boxplot=function(df,prefix, y_value,alternative='less'){
-  df$timepoint=factor(df$timepoint,c('1','2','3','4'))
-  df$Response=factor(df$Response,levels = c('Responders','Non-responders'))
+# Mann-Kendall test for monotonic trend 
+one_tail_mk=function(df){
+  test_result <- Kendall(x=as.numeric(as.character(df$timepoint)), y=df$Relative_frequency)
   
-  p <- ggboxplot(df, x = "timepoint", y = y_value,
+  # Extract p-value and tau
+  tau <- test_result$tau
+  p_value <- test_result$sl
+  
+  # Adjust p-value for one-tailed test
+  if (tau > 0) {
+    p_one_tailed <- p_value / 2  # For testing an increasing trend
+  } else {
+    p_one_tailed <- 1 - (p_value / 2)  # For testing a decreasing trend
+  }
+  
+  return(p_one_tailed)
+}
+
+
+## Figures
+cell_abund_sample=na.omit(cell_abund_sample)
+cell_abund_sample$timepoint=factor(cell_abund_sample$timepoint,levels = c(1,2,3,4))
+
+# CD8 cell 
+tmp_df=cell_abund_sample[which(cell_abund_sample$cell_type=='CD8 T'),]
+tmp_df=na.omit(tmp_df)
+p3_1=box_line_plot(tmp_df,alternative='less',prefix='CD8_cell_all_sample')
+
+# CD4 cell 
+tmp_df=cell_abund_sample[which(cell_abund_sample$cell_type=='CD4 T'),]
+tmp_df=na.omit(tmp_df)
+p3_2=box_line_plot(tmp_df,alternative='less',prefix='CD4_cell_all_sample')
+
+# B cell 
+tmp_df=cell_abund_sample[which(cell_abund_sample$cell_type=='B cell'),]
+tmp_df=na.omit(tmp_df)
+p3_3=box_line_plot(tmp_df,alternative='less',prefix='b_cell_all_sample')
+
+# Neutrophil cell 
+tmp_df=cell_abund_sample[which(cell_abund_sample$cell_type=='Neutrophil'),]
+tmp_df=na.omit(tmp_df)
+p3_4=box_line_plot(tmp_df,alternative='greater',prefix='Neutrophil_all_sample')
+
+## ------- F1D: box plot of Teff, Th1 cell abundance between responders and non-responders -------
+## Functions 
+# Box plot
+diff_abundance_box=function(cond1,cond2,prefix,alternative = "less"){
+  df=rbind(cond1,cond2)
+  df$Response=factor(df$Response,levels = c('Responders','Non-responders'))
+  p <- ggboxplot(df, x = "timepoint", y = "Relative_frequency",
                  color = "Response", palette = "jco",
                  add = "jitter")
-  p = p + stat_compare_means(aes(group = Response),label = "p.signif",method = 'wilcox.test',method.args = list(alternative = alternative))+
-    xlab('Timepoints')
+  # p = p + stat_compare_means(aes(group = Response),label = "p.format",method = 'wilcox.test',method.args = list(alternative = "less"))
+  p = p + stat_compare_means(aes(group = Response),method = 'wilcox.test',method.args = list(alternative = alternative),label = "p.signif")
+  
+  # p = p + stat_compare_means(aes(group = Response),label = "p.format",method = 'wilcox.test')
   p
-  ggsave(file.path(outdir,paste0(prefix,'_tcr.pdf')),p,width = 6,height = 4)
+  ggsave(file.path(outdir,paste0(prefix,'.pdf')),p,width = 6,height = 4)
   return(p)
 }
 
-## CD8 effector memory T cell 
-teff_clone_size_box=twogroup_boxplot(df=teff_subtype_average_clone_size,y_value = 'mean_clone_size',prefix='sc_teff_tcr_mean_clone_size')
-
-teff_clone_fre_box=twogroup_boxplot(df=teff_subtype_extend_clone_fre,y_value = 'mean_extend_fre',prefix='sc_teff_tcr_mean_extend_fre')
-
-## ------- Test if expanded cells enriched in responders, frequency of expanded clonotypes -------
-## merge all time points, Fisher test
-all_te=tcr_meta[which(tcr_meta$frequency>=2),]
-all_ne=tcr_meta[which(tcr_meta$frequency==1),]
-responder_te=responder_tcr_meta[which(responder_tcr_meta$frequency>=2),]
-responder_ne=responder_tcr_meta[which(responder_tcr_meta$frequency==1),]
-nonresponder_te=nonresponder_tcr_meta[which(nonresponder_tcr_meta$frequency>=2),]
-nonresponder_ne=nonresponder_tcr_meta[which(nonresponder_tcr_meta$frequency==1),]
-
-responder_2b2=data.frame(te=c(nrow(responder_te),nrow(nonresponder_te)),ne=c(nrow(responder_ne),nrow(nonresponder_ne)),row.names = c('responders','non-responders'))
-clono_size_test=fisher.test(responder_2b2,alternative = 'greater')
-
-# barplot 
-tmp_df=as.data.frame(t(responder_2b2))
-tmp_df$expanded=rownames(tmp_df)
-
-df_responder=tmp_df[,c('responders','expanded')]
-df_nonresponder=tmp_df[,c('non-responders','expanded')]
-
-colnames(df_responder)[1]=c('cell_number')
-colnames(df_nonresponder)[1]=c('cell_number')
-
-df_responder$Freq=df_responder$cell_number/sum(df_responder$cell_number)
-df_nonresponder$Freq=df_nonresponder$cell_number/sum(df_nonresponder$cell_number)
-
-df_responder$Group='Responder'
-df_nonresponder$Group='Non-Responder'
-
-df=rbind(df_responder,df_nonresponder)
-
-tmp_df=df[which(df$expanded=='te'),]
-p=ggplot(tmp_df, aes(x=Group, y=Freq, fill=Group))+
-  geom_bar(stat="identity", color="black",width = 0.7)+
-  scale_fill_manual(values=c("#E69F00", "#56B4E9"))+
-  theme_classic()+
-  #geom_text(x=1.5, y=0.055, label="Pvalue: 5.43e-07")+
-  geom_text(x=1, y=0.055, label=paste0('P: ',signif(clono_size_test$p.value,3)))+
-  geom_text(x=2, y=0.055, label=paste0('Odds: ',signif(clono_size_test$estimate,3)))+
-  xlab('')+ylab('Frequncy of expanded clonetype')+theme(legend.position = 'none')
-p
-ggsave(file.path(outdir,paste0('cd8t','_clonetype_expantion.pdf')),p,width = 3,height = 4)
-
-## ------- Bulk TCR -------
-bulk_tcr_simp=twogroup_boxplot(df=bulk_tcr_div_inv_simp,y_value = 'Value',prefix='bulk_tcr_simp')
-
-## ------- Bulk BCR -------
-bulk_bcr_simp=twogroup_boxplot(df=bulk_bcr_div_inv_simp,y_value = 'Value',prefix='bulk_bcr_simp')
-
-## ------- UMAP of CD4 T cells -------
-cd4_all_tcr_umap=tcr_umap(df=cd4_tcr_meta,prefix='cd4t_all_samples')
-
-# UMAP of CD4 T cells of responders, non-responder
-responder_samples=patient_meta$Sample.Name[which(patient_meta$group=='responder')]
-nonresponder_samples=patient_meta$Sample.Name[which(patient_meta$group%in%c('non-responder','stable/escape'))]
-
-responder_tcr_meta=cd4_tcr_meta[which(cd4_tcr_meta$sample_id2%in%responder_samples),]
-nonresponder_tcr_meta=cd4_tcr_meta[which(cd4_tcr_meta$sample_id2%in%nonresponder_samples),]
-
-cd4_res_tcr_umap=tcr_umap(df=responder_tcr_meta,prefix='cd4t_responders')
-cd4_non_tcr_umap=tcr_umap(df=nonresponder_tcr_meta,prefix='cd4t_nonresponder')
-
-## ------- Distribution of expanded CD4 clones ------- 
-th1_tcr_meta=cd4_tcr_meta[which(cd4_tcr_meta$Manually_curation=='Th1'),]
-othercd4_tcr_meta=cd4_tcr_meta[which(cd4_tcr_meta$cell_id%in%setdiff(cd4_tcr_meta$cell_id,th1_tcr_meta$cell_id)),]
-
-th1_tcr_te=th1_tcr_meta[which(th1_tcr_meta$frequency>=2),]
-th1_tcr_ne=th1_tcr_meta[which(th1_tcr_meta$frequency==1),]
-
-othercd4_tcr_te=othercd4_tcr_meta[which(othercd4_tcr_meta$frequency>=2),]
-othercd4_tcr_ne=othercd4_tcr_meta[which(othercd4_tcr_meta$frequency==1),]
-
-th1_other_2b2=data.frame(te=c(nrow(th1_tcr_te),nrow(othercd4_tcr_te)),ne=c(nrow(th1_tcr_ne),nrow(othercd4_tcr_ne)),row.names = c('th1','other'))
-test_res=fisher.test(th1_other_2b2,alternative = 'greater')
-
-# barplot 
-tmp_df=as.data.frame(t(th1_other_2b2))
-tmp_df$group=rownames(tmp_df)
-
-df_th1=tmp_df[,c('th1','group')]
-colnames(df_th1)[1]='cell_number'
-df_th1$Freq=df_th1$cell_number/sum(df_th1$cell_number)
-df_th1$Group2='Th1'
-
-df_other=tmp_df[,c('other','group')]
-colnames(df_other)[1]='cell_number'
-df_other$Freq=df_other$cell_number/sum(df_other$cell_number)
-df_other$Group2='Other T'
-
-df=rbind(df_th1,df_other)
-df$group[which(df$group=='te')]='Expanded'
-df$group[which(df$group=='ne')]='Non-expanded'
-df$group=factor(df$group,c('Non-expanded','Expanded'))
-
-cd4_tcr_dis=ggplot(data=df, aes(x=Group2, y=Freq, fill=group)) +
-  geom_bar(stat="identity",width = 0.7)+
-  theme_classic()+xlab('')+
-  geom_text(x=1, y=1.05, label=paste0('P: ',test_res$p.value))+
-  geom_text(x=2, y=1.05, label=paste0('Odds: ',signif(test_res$estimate,4)))+
-  #scale_fill_brewer(palette="Dark2")+
-  #scale_fill_manual(values=c("#1B9E77","#E7298A"))+
-  scale_fill_manual(values=c("#66c2a5","#FC4E07"))+
-  expand_limits(y = c(0, 1.05))+theme(legend.title = element_blank() )
-cd4_tcr_dis
-ggsave(file.path(outdir,paste0('cd4t','_clonetype_distribution.pdf')),cd4_tcr_dis,width = 4,height = 4)
-
-## ------- Calculate AUC with T and B cell expansion index -------
-## Functions
-cal_auc_odd=function(df,score_col,response_col,group_col,timepoint_col){
-  df=df[,c(score_col,response_col,group_col,timepoint_col)]
-  colnames(df)=c('score','Response','group','timepoint')
+# Line plot
+diff_abundance_line=function(cond1,cond2,prefix,alternative = "less"){
+  df=rbind(cond1,cond2)
+  df$Response=factor(df$Response,levels = c('Responders','Non-responders'))
   
-  pred_res=data.frame()
-  for (i in unique(df$group)){
-    for (j in unique(df$timepoint)){
-      tmp_df=df[which(df$group==i&df$timepoint==j),]
-      if (length(unique(tmp_df$Response))==2){
-        opt_cut <- cutpointr(tmp_df, score, Response, direction = ">=", pos_class = "1",
-                             neg_class = "0", method = maximize_metric, metric = sum_sens_spec)
-        opt_cut$group=i
-        opt_cut$timepoint=j
-        pred_res=rbind(pred_res,opt_cut)
-      }
-    }
-  }
-  return(pred_res)
-}
-
-## Calculate AUC with single cell Tem TCR data 
-df=teff_subtype_average_clone_size
-df$treatment='aPD1'
-df$Response=ifelse(df$Response=='Responders','1',"0")
-
-sc_auc=cal_auc_odd(df,score_col='mean_clone_size',response_col='Response',group_col='treatment',timepoint_col='timepoint')
-
-## Calculate AUC with single cell Tem TCR data 
-df=sample_average_clone_size
-df$treatment='aPD1'
-df$Response=ifelse(df$group=='responder','1',"0")
-
-sc_allt_auc=cal_auc_odd(df,score_col='mean_clone_size',response_col='Response',group_col='treatment',timepoint_col='timepoint')
-
-## Calculate AUC with bulk TCR and BCR data 
-# TCR
-df=bulk_tcr_div_inv_simp
-df$treatment='aPD1'
-df$Response=ifelse(df$Response=='Responders','1',"0")
-
-bulk_tcr_auc=cal_auc_odd(df,score_col='Value',response_col='Response',group_col='treatment',timepoint_col='timepoint')
-
-# BCR
-df=bulk_bcr_div_inv_simp
-df$treatment='aPD1'
-df$Response=ifelse(df$Response=='Responders','1',"0")
-
-bulk_bcr_auc=cal_auc_odd(df,score_col='Value',response_col='Response',group_col='treatment',timepoint_col='timepoint')
-
-## plot AUC
-sc_auc$Group='sc_Tem_TCR'
-sc_allt_auc$Group='sc_all_Tcell_TCR'
-bulk_tcr_auc$Group='bulk_TCR'
-bulk_bcr_auc$Group='bulk_BCR'
-
-df_plot=rbind(sc_auc,bulk_tcr_auc,bulk_bcr_auc)
-
-
-p = ggplot(data=df_plot, aes(x=timepoint, y=AUC, color=Group,fill=Group)) +
-  geom_bar(stat="identity", position=position_dodge(width = 0.9),width = 0.8,color="black")+
-  geom_text(aes(label=signif(AUC,2)), vjust=-1, color="black",
-            position = position_dodge(0.9), size=2.5)+
-  scale_fill_brewer(palette="Set2")+
-  #scale_color_brewer(palette="Dark2")+
-  theme_classic()
-p
-ggsave(file.path(outdir,paste0('tcr','_auc_mouse.pdf')),p,width = 6,height = 3.5)
-
-## Add sc All T cells 
-df_plot=rbind(sc_auc,sc_allt_auc,bulk_tcr_auc,bulk_bcr_auc)
-
-p = ggplot(data=df_plot, aes(x=timepoint, y=AUC, color=Group,fill=Group)) +
-  geom_bar(stat="identity", position=position_dodge(width = 0.9),width = 0.8,color="black")+
-  geom_text(aes(label=signif(AUC,2)), vjust=-1, color="black",
-            position = position_dodge(0.9), size=2.5)+
-  scale_fill_brewer(palette="Set2")+
-  #scale_color_brewer(palette="Dark2")+
-  theme_classic()
-p
-ggsave(file.path(outdir,paste0('tcr','all_Tcell_auc_mouse.pdf')),p,width = 7,height = 3.5)
-
-## ------- ROC curve for each timepoint -------
-# Function
-library(pROC)
-library(RColorBrewer)
-roc_plot=function(df_score){
+  p=ggline(df, x = "timepoint", y = "Relative_frequency", add = "mean_se",
+         color = "Response", palette = "jco")+
+    #stat_compare_means(aes(group = Response), label = "p.signif")
+    stat_compare_means(aes(group = Response),method = 'wilcox.test',method.args = list(alternative = alternative),label = "p.signif")
   
-  df_plot=df_score[,c('filtered_t2_B cell','filtered_t2_Effector memory CD8','mean_score','Response')]
-  colnames(df_plot)=c('Sig_B','Sig_Teff','Comb_sig','Response')
-  
-  # Create a list to store ROC curves
-  roc_list <- list(
-    Sig_B = pROC::roc(df_plot$Response, df_plot$Sig_B),
-    Sig_Teff = pROC::roc(df_plot$Response, df_plot$Sig_Teff),
-    Comb_sig = pROC::roc(df_plot$Response, df_plot$Comb_sig)
-  )
-  
-  # Calculate AUC and update names
-  auc_values <- sapply(roc_list, auc)
-  names(roc_list) <- paste0(names(roc_list), " (AUC: ", round(auc_values, 2), ")")
-  
-  # Define custom colors using a color palette
-  color_palette <- brewer.pal(n = length(roc_list), name = "Set1")
-  custom_colors <- setNames(color_palette, names(roc_list))
-  
-  # Plot with ggroc and custom colors
-  p = ggroc(roc_list) +
-    ggtitle("ROC Curves with AUC Values") +
-    theme_classic2() +
-    labs(color = "Model") +
-    scale_color_manual(values = custom_colors) +
-    theme(
-      legend.position = "right",
-      text = element_text(size = 12),
-      plot.title = element_text(hjust = 0.5, size = 16, face = "bold")
-    )
+  ggsave(file.path(outdir,paste0(prefix,'.pdf')),p,width = 6,height = 4)
   return(p)
 }
 
+
+## Teff abundance 
+subtype_abund_sample=na.omit(subtype_abund_sample)
+subtype_abund_sample$timepoint=factor(subtype_abund_sample$timepoint,levels = c(1,2,3,4))
+
+# response
+df_res=subtype_abund_sample[which(subtype_abund_sample$Response=='Responders'&subtype_abund_sample$cell_type=='Effector memory CD8'),]
+df_res=na.omit(df_res)
+p4_1=box_line_plot(df_res,alternative='less',prefix='teff_response')
+
+mk_res=one_tail_mk(df_res)
+
+p4_1=p4_1+geom_text(x=3.5, y=0.0535, label=paste0("Mann-Kendall test p-value: ", signif(mk_res[1],2)))
+ggsave(file.path(outdir,paste0('teff_response_mk','.pdf')),p4_1,width = 3.5,height = 4.5)
+
+# non-response
+df_non=subtype_abund_sample[which(subtype_abund_sample$Response=='Non-responders'&subtype_abund_sample$cell_type=='Effector memory CD8'),]
+df_non=na.omit(df_non)
+p4_2=box_line_plot(df_non,alternative='less',prefix='teff_non_response')
+
+mk_res=one_tail_mk(df_non)
+
+p4_2=p4_2+geom_text(x=3.5, y=0.052, label=paste0("Mann-Kendall test p-value: ", signif(mk_res[1],2)))
+ggsave(file.path(outdir,paste0('teff_non_response_mk','.pdf')),p4_2,width = 3.5,height = 4.5)
+
+# responder vs non-responder
+p4_3=diff_abundance_box(cond1=df_res,cond2=df_non,prefix='teff_res_non',alternative = "less")
+p4_4=diff_abundance_line(cond1=df_res,cond2=df_non,prefix='teff_res_non_line',alternative = "less")
+
+## Th1 CD4 abundance
+# response
+df_res=subtype_abund_sample[which(subtype_abund_sample$Response=='Responders'&subtype_abund_sample$cell_type=='Th1'),]
+df_res=na.omit(df_res)
+sp1=box_line_plot(df_res,alternative='less',prefix='th1_response')
+
+mk_res=one_tail_mk(df_res)
+
+sp1=sp1+geom_text(x=3.5, y=0.0535, label=paste0("Mann-Kendall test p-value: ", signif(mk_res[1],2)))
+ggsave(file.path(outdir,paste0('th1_response_mk','.pdf')),sp1,width = 3.5,height = 4.5)
+
+# non-response
+df_non=subtype_abund_sample[which(subtype_abund_sample$Response=='Non-responders'&subtype_abund_sample$cell_type=='Th1'),]
+df_non=na.omit(df_non)
+sp1_non=box_line_plot(df_non,alternative='less',prefix='th1_non_response')
+
+mk_res=one_tail_mk(df_non)
+
+sp1_non=sp1_non+geom_text(x=3.5, y=0.052, label=paste0("Mann-Kendall test p-value: ", signif(mk_res[1],2)))
+ggsave(file.path(outdir,paste0('th1_non_response_mk','.pdf')),sp1_non,width = 3.5,height = 4.5)
+
+# responder vs non-responder
+sp1_3=diff_abundance_box(cond1=df_res,cond2=df_non,prefix='th1_res_non',alternative = "less")
+sp1_4=diff_abundance_line(cond1=df_res,cond2=df_non,prefix='th1_res_non_line',alternative = "less")
+
+## Treg abundance
+# response
+df_res=subtype_abund_sample[which(subtype_abund_sample$Response=='Responders'&subtype_abund_sample$cell_type=='Treg'),]
+df_res=na.omit(df_res)
+sp_treg=box_line_plot(df_res,alternative='less',prefix='treg_response')
+
+mk_res=one_tail_mk(df_res)
+
+sp_treg=sp_treg+geom_text(x=3.5, y=0.02, label=paste0("Mann-Kendall test p-value: ", signif(mk_res[1],2)))
+ggsave(file.path(outdir,paste0('treg_response_mk','.pdf')),sp_treg,width = 3.5,height = 4.5)
+
+# non-response
+df_non=subtype_abund_sample[which(subtype_abund_sample$Response=='Non-responders'&subtype_abund_sample$cell_type=='Treg'),]
+df_non=na.omit(df_non)
+sp_treg_non=box_line_plot(df_non,alternative='less',prefix='treg_non_response')
+
+mk_res=one_tail_mk(df_non)
+
+sp_treg_non=sp_treg_non+geom_text(x=3.5, y=0.02, label=paste0("Mann-Kendall test p-value: ", signif(mk_res[1],2)))
+ggsave(file.path(outdir,paste0('treg_non_response_mk','.pdf')),sp_treg_non,width = 3.5,height = 4.5)
+
+# responder vs non-responder
+sp_treg_3=diff_abundance_box(cond1=df_res,cond2=df_non,prefix='treg_res_non',alternative = "less")
+sp_treg_4=diff_abundance_line(cond1=df_res,cond2=df_non,prefix='treg_res_non_line',alternative = "less")
+
+## B cell abundance 
+# response
+df_res=subtype_abund_sample[which(subtype_abund_sample$Response=='Responders'&subtype_abund_sample$cell_type=='B cell'),]
+df_res=na.omit(df_res)
+p5_1=box_line_plot(df_res,alternative='less',prefix='b_response')
+
+mk_res=one_tail_mk(df_res)
+p5_1=p5_1+geom_text(x=3.5, y=0.052, label=paste0("Mann-Kendall test p-value: ", signif(mk_res[1],2)))
+ggsave(file.path(outdir,paste0('b_response_mk','.pdf')),p5_1,width = 3.5,height = 4.5)
+
+# non-response
+df_non=subtype_abund_sample[which(subtype_abund_sample$Response=='Non-responders'&subtype_abund_sample$cell_type=='B cell'),]
+df_non=na.omit(df_non)
+p5_2=box_line_plot(df_non,alternative='less',prefix='b_non_response')
+
+mk_res=one_tail_mk(df_non)
+p5_2=p5_2+geom_text(x=3.5, y=0.052, label=paste0("Mann-Kendall test p-value: ", signif(mk_res[1],2)))
+ggsave(file.path(outdir,paste0('b_non_response_mk','.pdf')),p5_2,width = 3.5,height = 4.5)
+
+# responder vs non-responder
+p5_3=diff_abundance_box(cond1=df_res,cond2=df_non,prefix='b_res_non',alternative = "less")
+p5_4=diff_abundance_line(cond1=df_res,cond2=df_non,prefix='b_res_non_line',alternative = "less")
+
+# ## ------- Arrange figure 1 -------
+# library("cowplot")
+# p=ggdraw() +
+#   draw_plot(p1, x = 0, y = .7, width = .3, height = .25) +
+#   draw_plot(p2, x = 0.3, y = .7, width = .2, height = .25) +
+#   draw_plot(p3_1, x = 0.5, y = .7, width = .125, height = 0.2) +
+#   draw_plot(p3_2, x = 0.625, y = .7, width = .125, height = 0.2) +
+#   draw_plot(p3_3, x = 0.75, y = .7, width = .125, height = 0.2) +
+#   draw_plot(p3_4, x = 0.875, y = .7, width = .125, height = 0.2) +
+#   draw_plot(p4_1, x = 0, y = .4, width = .125, height = 0.2) +
+#   draw_plot(p4_2, x = 0.2, y = .4, width = .125, height = 0.2) +
+#   draw_plot(p4_3, x = 0.4, y = .4, width = .6, height = 0.25) +
+#   draw_plot(p5_1, x = 0, y = .1, width = .125, height = 0.2) +
+#   draw_plot(p5_2, x = 0.2, y = .1, width = .125, height = 0.2) +
+#   draw_plot(p5_3, x = 0.4, y = .1, width = .6, height = 0.25) +
+#   draw_plot_label(label = c("A", "B", "C",'D','E','F','G','H','I'), size = 15,
+#                   x = c(0, 0.25, 0.4,0,0.2,0.4,0,0.2,0.4), y = c(0.98, 0.98, 0.98,0.65,0.65,0.65,0.35,0.35,0.35))
+# p
+# ggsave('figure1.pdf',p,width = 17,height = 23)
 # 
-comb_t="filtered_t2_Effector memory CD8"
-comb_b="filtered_t2_B cell"
-
-# Luoma dataset
-sc_patient_icb=readRDS('../results/ICB_ML/datasets/patient_sc_dat.rds')
-sc_luoma_pbmc_score=sig_score_func(expr_df=as.matrix(sc_patient_icb$Luoma_pbmc$Pseudobulk),meta=sc_patient_icb$Luoma_pbmc$meta,sig_ls=clean_sig_ls$human_sig_ls,comb_score = T,comb_t = comb_t,comb_b = comb_b)
-
-df_score=teff_subtype_average_clone_size
-bulk_tcr_div_inv_simp
-bulk_bcr_div_inv_simp
-
-## bulk TCR and BCR
-tmp_tcr=bulk_tcr_div_inv_simp[,c('Sample','Value','timepoint','Response')]
-tmp_bcr=bulk_bcr_div_inv_simp[,c('Sample','Value')]
-colnames(tmp_tcr)[2]='TCR_clonality'
-colnames(tmp_bcr)[2]='BCR_clonality'
-
-df_score=merge(tmp_tcr,tmp_bcr,by='Sample')
-
-for (i in unique(df_score$timepoint)){
-  tmp_df_score=df_score[which(df_score$timepoint==i),]
-  # Create a list to store ROC curves
-  roc_list <- list(
-    TCR_clonality = pROC::roc(tmp_df_score$Response, tmp_df_score$TCR_clonality),
-    BCR_clonality = pROC::roc(tmp_df_score$Response, tmp_df_score$BCR_clonality)
-  )
-  # Calculate AUC and update names
-  auc_values <- sapply(roc_list, auc)
-  names(roc_list) <- paste0(names(roc_list), " (AUC: ", round(auc_values, 2), ")")
-  
-  # Define custom colors using a color palette
-  # color_palette <- brewer.pal(n = length(roc_list), name = "Set2")
-  #color_palette = c("#66C2A5","#FC8D62")
-  color_palette = c("#E41A1C","#377EB8") 
-  custom_colors <- setNames(color_palette, names(roc_list))
-  # Plot with ggroc and custom colors
-  p = ggroc(roc_list) +
-    ggtitle("Bulk RNAseq TCR and BCR") +
-    theme_classic() +
-    labs(color = "Model") +
-    scale_color_manual(values = custom_colors) +
-    theme(
-      legend.position = "right",
-      text = element_text(size = 12),
-      plot.title = element_text(hjust = 0.5, size = 16, face = "bold")
-    )
-  p
-  ggsave(file.path(outdir,paste0('ROC_AUC_T',i,'.pdf')),width = 5,height = 3)
-}
-
-## Single cell TCR of Tem
-df_score=teff_subtype_average_clone_size
-for (i in unique(df_score$timepoint)){
-  tmp_df_score=df_score[which(df_score$timepoint==i),]
-  # Create a list to store ROC curves
-  roc_list <- list(
-    TCR_clonality = pROC::roc(tmp_df_score$Response, tmp_df_score$mean_clone_size)
-  )
-  # Calculate AUC and update names
-  auc_values <- sapply(roc_list, auc)
-  names(roc_list) <- paste0(names(roc_list), " (AUC: ", round(auc_values, 2), ")")
-  
-  # Define custom colors using a color palette
-  #color_palette <- brewer.pal(n = length(roc_list), name = "Set1")
-  color_palette = "#4DAF4A"
-  custom_colors <- setNames(color_palette, names(roc_list))
-  
-  # Plot with ggroc and custom colors
-  p = ggroc(roc_list) +
-    ggtitle("Single cell TCR") +
-    theme_classic() +
-    labs(color = "Model") +
-    scale_color_manual(values = custom_colors) +
-    theme(
-      legend.position = "right",
-      text = element_text(size = 12),
-      plot.title = element_text(hjust = 0.5, size = 16, face = "bold")
-    )
-  p
-  ggsave(file.path(outdir,paste0('sc_ROC_AUC_T',i,'.pdf')),width = 5,height = 3)
-}
-
-## Single cell TCR of Tem and All T cells
-tmp_df=teff_subtype_average_clone_size[,c('sample_id','mean_clone_size')]
-colnames(tmp_df)[2]='Tem_clone_size'
-colnames(sample_average_clone_size)[1]='Tcell_clone_size'
-df_score=merge(tmp_df,sample_average_clone_size,by='sample_id')
-df_score$Response=ifelse(df_score$group=='responder','1','0')
-
-for (i in unique(df_score$timepoint)){
-  tmp_df_score=df_score[which(df_score$timepoint==i),]
-  # Create a list to store ROC curves
-  roc_list <- list(
-    Tem_clonality = pROC::roc(tmp_df_score$Response, tmp_df_score$Tem_clone_size),
-    Tcell_clonality = pROC::roc(tmp_df_score$Response, tmp_df_score$Tcell_clone_size)
-  )
-  # Calculate AUC and update names
-  auc_values <- sapply(roc_list, auc)
-  names(roc_list) <- paste0(names(roc_list), " (AUC: ", round(auc_values, 2), ")")
-  
-  # Define custom colors using a color palette
-  # color_palette <- brewer.pal(n = length(roc_list), name = "Set2")
-  #color_palette = c("#66C2A5","#FC8D62")
-  color_palette = c("#4DAF4A","#E78AC3") 
-  custom_colors <- setNames(color_palette, names(roc_list))
-  # Plot with ggroc and custom colors
-  p = ggroc(roc_list) +
-    ggtitle("Bulk RNAseq TCR and BCR") +
-    theme_classic() +
-    labs(color = "Model") +
-    scale_color_manual(values = custom_colors) +
-    theme(
-      legend.position = "right",
-      text = element_text(size = 12),
-      plot.title = element_text(hjust = 0.5, size = 16, face = "bold")
-    )
-  p
-  ggsave(file.path(outdir,paste0('ROC_AUC_Tem_Tcell',i,'.pdf')),width = 5,height = 3)
-}
-
-## ------- Expression markers of transit T cell markers -------
-features=c('Cd101','Havcr2','Tcf7','Cx3cr1','Tbx21','Gzmb','Mki67')
-p=RidgePlot(cd8_t_obj$RNA, features = features, ncol = 2,group.by = 'Manually_curation',log = T)
-ggsave(file.path(outdir,paste0("T_transit_makers_ridge.pdf")), p,  width=16, height=20)
-
-DotPlot(cd8_t_obj$RNA, features = features,group.by = 'Manually_curation') + RotatedAxis()
-ggsave(file.path(outdir,paste0("T_transit_makers_dot.pdf")),  width=8, height=4)
-
-FeaturePlot(cd8_t_obj$RNA, features = c('Havcr2','Tcf7','Cx3cr1','Tbx21','Gzmb','Mki67'),ncol = 3)
-ggsave(file.path(outdir,paste0("T_transit_makers_feature.pdf")),  width=12, height=8)
-
-VlnPlot(cd8_t_obj$RNA, features = features,group.by = 'Manually_curation')
-ggsave(file.path(outdir,paste0("T_transit_makers_vln.pdf")),  width=12, height=12)
-
+# f1_1=ggarrange(p1, p2, p3_1, p3_2, p3_3, p3_4 + rremove("x.text"), 
+#           labels = c("A", "B", "C"),widths=c(2,1.5,1,1,1,1),
+#           ncol = 6, nrow = 1)
+# f1_2=ggarrange(p4_1, p4_2, p4_3 + rremove("x.text"), 
+#                labels = c("D", "E", "F"),widths=c(2,2,6),
+#                ncol = 3, nrow = 1)
+# f1_3=ggarrange(p5_1, p5_2, p5_3 + rremove("x.text"), 
+#                labels = c("G", "H", "I"),widths=c(2,2,6),
+#                ncol = 3, nrow = 1)
+# p = ggarrange(f1_1,f1_2,f1_3,ncol = 1, nrow = 3)
+# p
+# ggsave('figure1.pdf',p,width = 17,height = 23)
+# 
+# 
+# 

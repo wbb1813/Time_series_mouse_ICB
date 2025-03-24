@@ -1,171 +1,122 @@
-library(cutpointr)
 library(ggplot2)
-library(tidyverse)
-library(magrittr)
-library(plyr)
-library(ModelMetrics)
-library(glmnet)
-library(cutpointr)
-library(survival)
-library(ggpubr)
-library(ggsignif)
-library(rstatix)
-library(pROC)
-library(scales)
-library(rstatix)
-library(abind)
-library(circlize)
 library(survival)
 library(survminer)
-
-## ------- Inputs and parameters -------
-inter_score=readRDS('../data/patient_interaction_score.rds')
+library(dplyr)
 
 outdir='../results/figure5'
-
 if (!dir.exists(outdir)){
   dir.create(outdir,recursive = T)
 }
-## -------  Calculate AUC R vs. NR across each timepoint RDI/RAI in mouse sc data -------
-auc_input_rdi=readRDS('../data/mouse_RDI_AUC.rds')
-auc_input_rdi_234=auc_input_rdi[which(auc_input_rdi$feature!='merge_feature'),]
-ggplot(data=auc_input_rdi_234, aes(x=timepoint, y=auc, fill=group)) +
-  geom_bar(stat="identity", position=position_dodge(), color='black')+
-  geom_text(aes(label=round(auc,2)), vjust=-0.3, size=3.5, position = position_dodge(0.9))+ 
-  scale_y_continuous(expand=c(0,0),limits=c(0,1))+
-  theme_pubr() +
-  theme(legend.position = "right")+
-  scale_fill_manual(values=c('#D0759F','#88BECD'))+
-  facet_wrap(~feature, scales='fixed',nrow = 1)+
-  ylab('AUC')
+## ------- Inputs and parameters -------
+bulk_patient_score=readRDS('../data/bulk_patient_score.rds')
+tcga_hnsc=read.delim('../data/tcga_hnsc_mean_tb_score.txt')
 
-ggsave(file.path(outdir,'mouse_sc_auc_rdi_timepoint.pdf'),width = 7,height = 3.5)
+df_comb_filter_pbmc=read.delim('../data/Teff_B_comb_AUC_PBMC.txt')
+df_comb_filter_tumor=read.delim('../data/Teff_B_comb_AUC_tumor.txt')
+df_compare_auc=read.delim('../data/auc_compare.txt')
 
-## ------- AUC in patient cohorts -------
-df_auc=read.delim('../data/RDI_AUC_patients.txt')
-p=ggplot(data=df_auc, aes(x=Group, y=AUC)) +
-  geom_bar(stat="identity", fill="#88BECD",color='black')+
-  geom_text(aes(label=signif(AUC,2)), vjust=-0.5, color="black", size=3.5)+
-  theme_classic() + theme(axis.text.x = element_text(hjust = 1,angle = 60))+xlab('')
+bulk_fixed_cutoff_odds_sum=read.delim('../data/fix_cutoff_bulk_test.txt')
+sc_fixed_cutoff_odds_sum=read.delim('../data/fix_cutoff_sc_test.txt')
+#fixed_cutoff=readRDS('../data/fix_cutoff.rds')
+
+## -------F5A: PBMC AUC barplot -------
+## PBMC
+df_comb_filter_pbmc$data_type='PBMC single-cell'
+df_comb_filter_pbmc$sig_name=factor(df_comb_filter_pbmc$sig_name,levels = c('t2_Effector memory CD8','t2_B cell','mean_score'))
+p=ggplot(data=df_comb_filter_pbmc, aes(x=id, y=AUC,fill=sig_name)) +
+  geom_bar(stat="identity", position=position_dodge(),color='black')+
+  geom_text(aes(label=AUC), position = position_dodge(0.9), vjust=-0.5, color="black", size=1.75)+
+  theme_classic() + theme(axis.text.x = element_text(hjust = 1,angle = 60))+xlab('')+
+  facet_grid(~data_type,scales = 'free_x',space = "free")+scale_fill_brewer(palette="Set2")
+
 p
-ggsave(file.path(outdir,paste0('mouse_IRIS_interaction_bulk_patient_AUC.pdf')),p,width = 5,height = 4.5)
+ggsave(file.path(outdir,'Teff_B_comb_filter_AUC_pbmc.pdf'),p,width = 5.5,height = 4.5)
 
-## ------- Interaction plot -------
-## Function 
-plot_interactions <- function(DD, cell_color_mapping = NULL, annotations = NULL, annotations_color_map = NULL, cell_separation_angle = 20, annotation_track_height = 4, annotation_track_margin_mm = 3) {
-  Netw <- data.frame(Source = sapply(DD[,1], function(x) {
-    aa <- strsplit(x,split = "_")[[1]]
-    return(paste(aa[1],":",aa[3],sep = ""))
-  }),
-  Target = sapply(DD[,1], function(x) {
-    aa <- strsplit(x,split = "_")[[1]]
-    return(paste(aa[2],":",aa[4],sep = ""))
-  }),
-  weights = sapply(DD[,2], function(x) {
-    return(x)
-  }),
-  stringsAsFactors = F
+## Tumor
+df_comb_filter_tumor$data_type=ifelse(df_comb_filter_tumor$data_type=='Bulk','Tumor bulk','Tumor single-cell')
+df_comb_filter_tumor$sig_name=factor(df_comb_filter_tumor$sig_name,levels = c('t2_Effector memory CD8','t2_B cell','mean_score'))
+df_comb_filter_tumor=df_comb_filter_tumor[which(df_comb_filter_tumor$Cohort!='Aoki_2021'),] ## This is a esophageal cancer dataset
+
+p=ggplot(data=df_comb_filter_tumor, aes(x=id, y=AUC,fill=sig_name)) +
+  geom_bar(stat="identity", position=position_dodge(),color='black')+
+  geom_text(aes(label=AUC), position = position_dodge(0.9), vjust=-0.5, color="black", size=1.75)+
+  theme_classic() + theme(axis.text.x = element_text(hjust = 1,angle = 60))+xlab('')+
+  facet_grid(~data_type,scales = 'free_x',space = "free")+scale_fill_brewer(palette="Set2")
+
+p
+ggsave(file.path(outdir,'Teff_B_comb_filter_AUC_tumor.pdf'),p,width = 10,height = 4.5)
+
+## ------- Comparasion between combine score and other public signatuer score -------
+# AUC
+colors <- c("#d62728", "#ff7f0e", "#2ca02c","#1f77b4" , "#9467bd",
+            "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
+            "#aec7e8", "#ffbb78", "#98df8a")
+sig_id=c('mean_score','teff_ifng','POPLAR_teff','proliferation','tgfb','stroma_emt','chemo_12','CD38','CXCL9','CD274','MEX3B')
+df_compare_auc=df_compare_auc[which(df_compare_auc$id!='Luoma_tumor_sc_Combo_Post'),]
+df_compare_auc=df_compare_auc[which(df_compare_auc$Cohort!='Aoki_2021'),]
+df_compare_auc$sig_name=factor(df_compare_auc$sig_name,levels = sig_id)
+p = ggplot(df_compare_auc, aes(x=sig_name, y=AUC)) +
+  geom_boxplot(color="#1f77b4",alpha=0.3,outlier.shape = NA) +
+  # Box plot with dot plot
+  geom_jitter(aes(colour = id,shape=id), position=position_jitter(0.2),size=2)+
+  theme_classic()+theme(axis.text.x = element_text(hjust = 0.5,vjust = 0.5,angle = 45))+
+  scale_color_manual(values=colors)+
+  scale_shape_manual(values=seq(0,15))+
+  xlab('')+
+  geom_hline(yintercept = 0.5,linetype='dashed',color="#d62728")
+p
+
+p = p + stat_compare_means(method = "wilcox.test",paired = T,ref.group = "mean_score",label='p.signif',method.args = list(alternative = "less")) # other groups compare to ref group, the alternative here should be "less"
+p
+ggsave(file.path(outdir,'auc_compare.pdf'),p,width = 7,height = 3.5)
+
+## ------- Identify fix threshold ------
+# # Plot the odds ratios against cutoffs
+# pdf(file.path(outdir,'fixed_threshold_max_odds.pdf'),width = 4,height = 3)
+# plot(fixed_cutoff$cutoffs, fixed_cutoff$odds_ratios, type = "l", xlab = "Cutoff", ylab = "Odds Ratio", main = "Maximizing Odds Ratio")
+# abline(v = fixed_cutoff$best_cutoff, col = "red", lty = 2)
+# dev.off()
+
+## ------- Test fixed threshold in testing cohorts -------
+## single cell
+p=ggplot(sc_fixed_cutoff_odds_sum, aes(x = id, y = odds_ratio, fill = Type)) +
+  geom_bar(stat = "identity", color = "black", width = 0.7) +  # Adds a black border to bars
+  scale_fill_manual(values = c("Training" = "#D55E00", "Testing" = "#009E73")) +  # Dark orange and teal+
+  geom_text(aes(label=signif(odds_ratio,2)), vjust=-0.3, size=3.5)+
+  theme_classic() +
+  labs(
+    x = "Cohort",
+    y = "Odds Ratio",
+    fill = "Cohort Type"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1)
   )
-  cc <- sapply(union(Netw$Source, Netw$Target), function(x) strsplit(x, split = ":")[[1]][1])
-  dd <- data.frame(from =  Netw$Source, to = Netw$Target, value =  Netw$weights, stringsAsFactors = F)
-  grid.col = rep("grey", length(cc))
-  if(is.null(cell_color_mapping)){
-    set.seed(1234) 
-    cl <- colors(distinct = TRUE)
-    mycl = sample(cl, length(unique(cc)))
-    for(i in which(names(cc) %in% Netw$Source)){
-      grid.col[i] <- mycl[which(unique(cc) == strsplit(names(cc)[i],split = ":")[[1]][1])]
-    }
-    names(grid.col) <- names(cc)
-  }
-  
-  else{
-    mycl = cell_color_mapping
-    for(i in which(names(cc) %in% Netw$Source)){
-      grid.col[i] <- mycl[strsplit(names(cc)[i],split = ":")[[1]][1]]
-    }
-    names(grid.col) <- names(cc)
-  }
-  
-  chordDiagram(dd,preAllocateTracks = list(list(
-    track.height = mm_h(4),
-    track.margin = c(mm_h(1), 0)
-  ),list(
-    track.height = mm_h(annotation_track_height),
-    track.margin = c(mm_h(annotation_track_margin_mm), 0)
-  ), list(
-    track.height = mm_h(4),
-    track.margin = c(mm_h(3), mm_h(3))
-  )),annotationTrack=NULL, 
-  grid.col = grid.col, 
-  order = names(cc), 
-  group = cc, 
-  big.gap = cell_separation_angle, 
-  directional = 1, 
-  direction.type = c("diffHeight", "arrows"),
-  link.arr.type = "big.arrow")
-  circos.trackPlotRegion(track.index = 3, panel.fun = function(x, y) {
-    xlim = get.cell.meta.data("xlim")
-    ylim = get.cell.meta.data("ylim")
-    lr = strsplit(CELL_META$sector.index,split = ":")[[1]][2]
-    circos.text(mean(xlim),mean(ylim),lr, col = "black", cex = 0.5, facing = 'reverse.clockwise', niceFacing = TRUE)
-  }, bg.border = 0)
-  
-  if(is.null(cell_color_mapping)){
-    for(ct in unique(cc)){
-      highlight.sector(names(cc)[cc == ct], track.index = 1, col = mycl[which(unique(cc) == ct)], 
-                       text = ct, cex = 0.8, text.col = "black", niceFacing = TRUE, text.vjust = -1.5)
-    }
-  }
-  
-  else{
-    for(ct in unique(cc)){
-      highlight.sector(names(cc)[cc == ct], track.index = 1, col = mycl[ct], 
-                       text = ct, cex = 0.8, text.col = "black", niceFacing = TRUE, text.vjust = -1.5)
-    }
-  }
-  
-  
-  if(!is.null(annotations)){
-    if(is.null(annotations_color_map))
-      stop("annotations_color_map missing!")
-    for(aa in unique(annotations)){
-      ss <- Netw$Target[annotations == aa]
-      highlight.sector(ss, track.index = 2, col = annotations_color_map[aa], 
-                       text = "", cex = 0.8, text.col = "black", niceFacing = TRUE, text.vjust = -1.5)
-    }
-  }
-  
-  
-  circos.clear()
-  
-}
-
-
-## ------- Plot interaction -------
-com_intr=readRDS('../data/patient_RDI.rds')
-
-## Make CELL LR DF
-Feature_df = com_intr %>% as.data.frame(.) %>% set_colnames('interaction') %>%
-  data.frame(.,str_split_fixed(.$interaction, '\\_', 4)) %>%
-  set_colnames(c('interaction','Lcell','Rcell','L','R')) %>% mutate(GenePair=paste(L,R,sep='_')) #%>% mutate(annotation=plyr::mapvalues(GenePair, from=LR_anno$GenePair, to=LR_anno$annotations))
-
-## ------- Figure 3A -------
-DD = Feature_df %>% dplyr::select(names=1) %>% mutate(weights=0.25, annotations = 'UNK') #DELETE
-DD$annotations = ifelse(is.na(DD$annotations), 'UNK', DD$annotations)
-int_ann = DD$annotations
-names(int_ann) <- DD$names
-acm <- c("white","darkorange","aquamarine2","darkorchid","deeppink","deepskyblue")
-names(acm) <- c('UNK', 'chemotaxis', 'cell-adhesion/LTEM', 'activating/co-stimulatory', 'pro-inflammatory', 'checkpoint/inhibitory')
-
-## save figure
-pdf(file.path(outdir,'interactions.pdf'),width = 6,height = 6)
-plot_interactions(DD[,1:2], cell_color_mapping = NULL, annotations = DD$annotations, annotations_color_map = acm, cell_separation_angle = 2, annotation_track_height = 2, annotation_track_margin_mm = 4)
-dev.off()
+p
+ggsave(file.path(outdir,'odds_ratio_train_test_sc.pdf'),p,width = 3.5,height = 3.5)
+## Bulk
+bulk_fixed_cutoff_odds_sum=bulk_fixed_cutoff_odds_sum[which(bulk_fixed_cutoff_odds_sum$cohort!='Aoki_2021'),]
+p=ggplot(bulk_fixed_cutoff_odds_sum, aes(x = id, y = odds_ratio, fill = Type)) +
+  geom_bar(stat = "identity", color = "black", width = 0.7) +  # Adds a black border to bars
+  scale_fill_manual(values = c("Training" = "#D55E00", "Testing" = "#009E73")) +  # Dark orange and teal+
+  geom_text(aes(label=signif(odds_ratio,2)), vjust=-0.3, size=3.5)+
+  theme_classic() +
+  labs(
+    x = "Cohort",
+    y = "Odds Ratio",
+    fill = "Cohort Type"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+p
+ggsave(file.path(outdir,'odds_ratio_train_test_bulk.pdf'),p,width = 3.5,height = 3.5)
 
 ## ------- Survival analysis -------
 ## Functions 
-hr_plot=function(df,surv_time,surv_status,sex_info,fig_title,prefix){
+hr_plot=function(df,surv_time,surv_status,sex_info,fig_title,xlim=3.5,width = 3,height = 5,prefix){
   colnames(df)[which(colnames(df)==surv_time)]='time'
   colnames(df)[which(colnames(df)==surv_status)]='status'
   df$time=as.numeric(df$time)
@@ -175,16 +126,16 @@ hr_plot=function(df,surv_time,surv_status,sex_info,fig_title,prefix){
   
   if ('HPV' %in% colnames(df)){
     if (isTRUE(sex_info)){
-      cox_model <- coxph(Surv(time, status) ~ Age + Sex + score + HPV, data = df)
+      cox_model <- coxph(Surv(time, status) ~ Age + Sex + mean_score + HPV, data = df)
     }else{
-      cox_model <- coxph(Surv(time, status) ~ Age + score + HPV, data = df)
+      cox_model <- coxph(Surv(time, status) ~ Age + mean_score + HPV, data = df)
     }
     
   }else{
     if (isTRUE(sex_info)){
-      cox_model <- coxph(Surv(time, status) ~ Age + Sex + score, data = df)
+      cox_model <- coxph(Surv(time, status) ~ Age + Sex + mean_score, data = df)
     }else{
-      cox_model <- coxph(Surv(time, status) ~ Age + score, data = df)
+      cox_model <- coxph(Surv(time, status) ~ Age + mean_score, data = df)
     }
   }
   
@@ -214,7 +165,7 @@ hr_plot=function(df,surv_time,surv_status,sex_info,fig_title,prefix){
       x = "Hazard Ratio",
       y = NULL
     ) +
-    theme_minimal() +
+    theme_minimal() +expand_limits(x = xlim)+
     theme(
       plot.title = element_text(hjust = 0.5),
       panel.grid.minor = element_blank(),
@@ -222,31 +173,71 @@ hr_plot=function(df,surv_time,surv_status,sex_info,fig_title,prefix){
     ) +
     geom_text(aes(label = p_value_label, x = upper_ci), hjust = -0.3)  # P-value text
   
-  ggsave(file.path(outdir,paste0(prefix,'.pdf')),p,width = 4,height = 6)
-  return(p)
+  ggsave(file.path(outdir,paste0(prefix,'.pdf')),p,width = width,height = height)
+  return(hr_data)
 }
 
+## TCGA
+df = tcga_hnsc
+df$HPV[which(df$HPV=='negative')]='Neg'
+df$HPV[which(df$HPV=='positive')]='Pos'
+df=df[which(df$HPV!='indeterminate'),]
+p_tcga=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=T,fig_title='TCGA HNSC',xlim = 15,width = 2,height = 4,prefix = 'tcga_hnsc_cox')
+
+
 ## Foy
-Foy_score=inter_score$Foy_score
-df=Foy_score
+df=bulk_patient_score$Foy1_2022
 df$HPV_status[which(df$HPV_status==0)]='Neg'
 df$HPV_status[which(df$HPV_status=='1')]='Pos'
 df$HPV_status[which(df$HPV_status=='2')]='Unknown'
+#df$HPV_status <- relevel(df$HPV_status, ref = "Unknown")
 colnames(df)[which(colnames(df)=='HPV_status')]='HPV'
 
-p_foy_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=T,fig_title='Foy et al. OS','foy_os_cox')
-p_foy_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=T,fig_title='Foy et al. PFS','foy_pfs_cox')
+p_foy_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=T,fig_title='Foy et al. OS',xlim = 25,width = 2.3,height = 4,prefix = 'foy_os_cox')
+p_foy_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=T,fig_title='Foy et al. PFS',xlim = 25,width = 2.3,height = 4,prefix = 'foy_pfs_cox')
 
 ## INSPIRE
-INSPIRE_score=inter_score$INSPIRE_score
-df=INSPIRE_score
-p_INSPIRE_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=F,fig_title='INSPIRE OS','INSPIRE_os_cox')
-p_INSPIRE_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=F,fig_title='INSPIRE PFS','INSPIRE_pfs_cox')
+df=bulk_patient_score$INSPIRE
+p_INSPIRE_os=hr_plot(df = df,surv_time='OS_days',surv_status='OS_status',sex_info=F,fig_title='INSPIRE OS',xlim = 30,width = 2.3,height = 2,prefix ='INSPIRE_os_cox')
+p_INSPIRE_pfs=hr_plot(df = df,surv_time='PFS_days',surv_status='PFS_status',sex_info=F,fig_title='INSPIRE PFS',xlim = 30,width = 2.3,height = 2,prefix ='INSPIRE_pfs_cox')
 
+## Figure with merged datasets 
+p_tcga$Cohort='TCGA HNSC OS'
+p_foy_os$Cohort='Foy et al. OS'
+p_foy_pfs$Cohort='Foy et al. PFS'
+p_INSPIRE_os$Cohort='INSPIRE OS'
+p_INSPIRE_pfs$Cohort='INSPIRE PFS'
+
+df_sur=rbind(p_tcga,p_foy_os,p_foy_pfs,p_INSPIRE_os,p_INSPIRE_pfs)
+df_sur$term[which(df_sur$term=='Sexmale')]='SexM'
+df_sur$p_label='ns'
+df_sur$p_label[which(df_sur$p_value_label<=0.05)]='*'
+df_sur$p_label[which(df_sur$p_value_label<=0.01)]='**'
+df_sur$p_label[which(df_sur$p_value_label<=0.001)]='***'
+df_sur$Cohort=factor(df_sur$Cohort,c("TCGA HNSC OS","Foy et al. OS","Foy et al. PFS","INSPIRE OS","INSPIRE PFS"))
+p=ggplot(df_sur, aes(x = hazard_ratio, y = term)) +
+  geom_point(shape = 15) +  # Square point to match original
+  geom_errorbarh(aes(xmin = lower_ci, xmax = upper_ci), height = 0.2) +
+  geom_vline(xintercept = 1, linetype = "dotted") +  # Reference line at HR = 1
+  labs(
+    title = '',
+    x = "Hazard Ratio",
+    y = NULL
+  ) +
+  theme_minimal() + expand_limits(x = 20)+
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank()
+  ) +
+  geom_text(aes(label = p_label, x = upper_ci), hjust = -0.3) +  # P-value text
+  facet_grid(~Cohort,scales='free_x')
+p
+ggsave(file.path(outdir,paste0('cox_hr','.pdf')),p,width = 6,height = 3)
 ## ------- KM curve -------
 ## Functions 
 km_plot=function(df,surv_time='OS_days',surv_status='OS_status',prefix){
-  df$score_group=ifelse(df$score > mean(df$score),'High','Low')
+  df$score_group=ifelse(df$mean_score > mean(df$mean_score),'High','Low')
   
   colnames(df)[which(colnames(df)==surv_time)]='time'
   colnames(df)[which(colnames(df)==surv_status)]='status'
@@ -259,20 +250,21 @@ km_plot=function(df,surv_time='OS_days',surv_status='OS_status',prefix){
   # Plot the Kaplan-Meier curves
   p_km=ggsurvplot(km_fit, data = df, pval = TRUE, conf.int = F, 
                   risk.table = TRUE, ggtheme = theme_minimal(),palette = c("darkred", "#2E9FDF"))
-  
   ggsave(file.path(outdir,paste(prefix,'_km_curve.pdf',sep = "_")),p_km$plot,width = 4,height = 3)
   return(p_km)
 }
 
+## TCGA
+km_tcga_os=km_plot(df=tcga_hnsc,surv_time='time',surv_status='status',prefix='tcga_os')
+
+km_tcga_neg_os=km_plot(df=tcga_hnsc[which(tcga_hnsc$HPV=='negative'),],surv_time='time',surv_status='status',prefix='tcga_os_neg')
+km_tcga_pos_os=km_plot(df=tcga_hnsc[which(tcga_hnsc$HPV=='positive'),],surv_time='time',surv_status='status',prefix='tcga_os_pos')
 
 ## Foy
-km_foy_os=km_plot(df=Foy_score,surv_time='OS_days',surv_status='OS_status',prefix='foy_os')
-km_foy_pfs=km_plot(df=Foy_score,surv_time='PFS_days',surv_status='PFS_status',prefix='foy_pfs')
+km_foy_os=km_plot(df=bulk_patient_score$Foy1_2022,surv_time='OS_days',surv_status='OS_status',prefix='foy_os')
+km_foy_pfs=km_plot(df=bulk_patient_score$Foy1_2022,surv_time='PFS_days',surv_status='PFS_status',prefix='foy_pfs')
 
 ## Foy
-km_INSPIRE_os=km_plot(df=INSPIRE_score,surv_time='OS_days',surv_status='OS_status',prefix='INSPIRE_os')
-km_INSPIRE_pfs=km_plot(df=INSPIRE_score,surv_time='PFS_days',surv_status='PFS_status',prefix='INSPIRE_pfs')
-
-
-
+km_INSPIRE_os=km_plot(df=bulk_patient_score$INSPIRE,surv_time='OS_days',surv_status='OS_status',prefix='INSPIRE_os')
+km_INSPIRE_pfs=km_plot(df=bulk_patient_score$INSPIRE,surv_time='PFS_days',surv_status='PFS_status',prefix='INSPIRE_pfs')
 
